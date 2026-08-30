@@ -1,0 +1,2025 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>منشئ الجداول الرسمية</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #172033;
+      --muted: #64748b;
+      --line: #d9e2ec;
+      --primary: #166534;
+      --primary-dark: #14532d;
+      --primary-soft: #dcfce7;
+      --danger: #b91c1c;
+      --danger-soft: #fee2e2;
+      --warning: #a16207;
+      --warning-soft: #fef3c7;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.11);
+      --radius: 16px;
+      --paper-scale: 1;
+      font-family: Tahoma, Arial, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top right, #e8f5ee 0, transparent 36%), var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    button:disabled,
+    input:disabled,
+    textarea:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 18px 0 34px;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(217, 226, 236, 0.9);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #22c55e);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 10px 20px rgba(22, 101, 52, 0.25);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.15rem, 1.5vw, 1.45rem);
+      line-height: 1.3;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .home-hero,
+    .saved-section,
+    .control-panel,
+    .toolbar,
+    .message,
+    .preview-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .home-hero {
+      padding: clamp(20px, 4vw, 34px);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .home-hero h2 {
+      margin: 0 0 8px;
+      font-size: clamp(1.35rem, 2.2vw, 2rem);
+    }
+
+    .home-hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(22, 101, 52, 0.22);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .btn-soft {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: #334155;
+    }
+
+    .saved-section {
+      padding: 20px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-head h3,
+    .control-group h3 {
+      margin: 0;
+      font-size: 1.12rem;
+    }
+
+    .section-head p,
+    .control-hint {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 14px;
+    }
+
+    .table-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 15px;
+      background: linear-gradient(180deg, #fff, #fbfdff);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 205px;
+    }
+
+    .table-card h4 {
+      margin: 0;
+      font-size: 1.05rem;
+      overflow-wrap: anywhere;
+    }
+
+    .card-meta {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card-total {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      direction: ltr;
+      text-align: right;
+      unicode-bidi: plaintext;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .empty-state {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 10px;
+      padding: 34px 18px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: var(--surface-soft);
+      color: var(--muted);
+    }
+
+    .empty-state strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.05rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .message {
+      display: none;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      box-shadow: none;
+      font-weight: 700;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: var(--primary-soft);
+      border-color: #bbf7d0;
+      color: var(--primary-dark);
+    }
+
+    .message.error {
+      background: var(--danger-soft);
+      border-color: #fecaca;
+      color: var(--danger);
+    }
+
+    .message.warning {
+      background: var(--warning-soft);
+      border-color: #fde68a;
+      color: var(--warning);
+    }
+
+    .editor-workspace {
+      display: grid;
+      grid-template-columns: minmax(310px, 380px) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .control-panel {
+      padding: 16px;
+      position: sticky;
+      top: 90px;
+      max-height: calc(100vh - 110px);
+      overflow: auto;
+    }
+
+    .control-group {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .control-group:first-child {
+      padding-top: 0;
+    }
+
+    .control-group:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .field label,
+    .file-label,
+    .row-field label {
+      color: #334155;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .input,
+    .textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: var(--text);
+      border-radius: 11px;
+      min-height: 42px;
+      padding: 9px 11px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .textarea {
+      min-height: 74px;
+      resize: vertical;
+    }
+
+    .input:focus,
+    .textarea:focus {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+    }
+
+    .input.invalid,
+    .textarea.invalid {
+      border-color: var(--danger);
+      background: #fff7f7;
+    }
+
+    .file-box {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 13px;
+      background: var(--surface-soft);
+    }
+
+    .file-box input[type="file"] {
+      width: 100%;
+    }
+
+    .image-status {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .rows-editor {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .row-card {
+      border: 1px solid #dbe4ef;
+      border-radius: 13px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+
+    .row-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .row-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #e2e8f0;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .row-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .row-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .amount-input {
+      direction: ltr;
+      text-align: right;
+      unicode-bidi: plaintext;
+    }
+
+    .field-note {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 4px;
+    }
+
+    .panel-footer {
+      display: grid;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .preview-card {
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .preview-head h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .preview-head span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .paper-viewport {
+      width: 100%;
+      overflow: auto;
+      padding: 12px;
+      border-radius: 14px;
+      background: repeating-linear-gradient(45deg, #e9eef5, #e9eef5 10px, #eef3f8 10px, #eef3f8 20px);
+    }
+
+    .paper-scale-frame {
+      width: 100%;
+      min-height: calc(297mm * var(--paper-scale));
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .paper {
+      width: 210mm;
+      min-height: 297mm;
+      flex: 0 0 auto;
+      transform: scale(var(--paper-scale));
+      transform-origin: top center;
+      background: #fff;
+      color: #111827;
+      padding: 12mm 11mm;
+      box-shadow: 0 16px 38px rgba(15, 23, 42, 0.22);
+      direction: rtl;
+      font-family: Tahoma, Arial, "Segoe UI", sans-serif;
+      font-size: 11pt;
+      line-height: 1.45;
+    }
+
+    .document-basmala {
+      height: 22mm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4mm;
+    }
+
+    .document-basmala img {
+      display: block;
+      max-width: 88mm;
+      max-height: 20mm;
+      object-fit: contain;
+    }
+
+    .basmala-placeholder {
+      min-width: 74mm;
+      max-width: 92mm;
+      height: 18mm;
+      display: grid;
+      place-items: center;
+      border: 1px dashed #b6c2d2;
+      border-radius: 6px;
+      color: #64748b;
+      font-size: 10pt;
+      background: #f8fafc;
+    }
+
+    .document-title {
+      margin: 0 0 6mm;
+      text-align: center;
+      font-size: 16pt;
+      line-height: 1.35;
+      font-weight: 800;
+      color: #111827;
+      overflow-wrap: anywhere;
+    }
+
+    .document-title.placeholder-text {
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .official-table,
+    .total-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      color: #111827;
+    }
+
+    .official-table th,
+    .official-table td,
+    .total-table td {
+      border: 1px solid #111827;
+      padding: 5px 6px;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .official-table th {
+      background: #f1f5f9;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .official-table td {
+      min-height: 25px;
+    }
+
+    .official-table .col-number {
+      width: 9%;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .official-table .col-description {
+      width: 47%;
+    }
+
+    .official-table .col-date {
+      width: 20%;
+      text-align: center;
+    }
+
+    .official-table .col-amount {
+      width: 24%;
+      text-align: center;
+    }
+
+    .numeric,
+    .amount-cell {
+      direction: ltr;
+      unicode-bidi: plaintext;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .total-table {
+      margin-top: 2.5mm;
+      font-weight: 800;
+    }
+
+    .total-table .total-label {
+      width: 18%;
+      text-align: center;
+      background: #f8fafc;
+    }
+
+    .total-table .total-number {
+      width: 22%;
+      direction: ltr;
+      unicode-bidi: plaintext;
+      text-align: center;
+    }
+
+    .total-table .total-words {
+      width: 60%;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .person-block {
+      width: 58mm;
+      margin-top: 5mm;
+      margin-right: auto;
+      margin-left: 0;
+      text-align: center;
+      font-size: 11pt;
+      font-weight: 700;
+      line-height: 1.85;
+      overflow-wrap: anywhere;
+    }
+
+    .person-line.empty {
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .print-only-note {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .editor-workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .control-panel {
+        position: static;
+        max-height: none;
+      }
+
+      .toolbar {
+        position: static;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .app-shell {
+        width: min(100% - 14px, 1180px);
+        padding-top: 8px;
+      }
+
+      .app-header,
+      .home-hero,
+      .section-head,
+      .toolbar,
+      .preview-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .home-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .toolbar-actions,
+      .card-actions {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .toolbar-actions {
+        display: grid;
+      }
+
+      .row-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .paper-viewport {
+        padding: 8px;
+      }
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      :root {
+        --paper-scale: 1 !important;
+      }
+
+      html,
+      body {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+      }
+
+      body * {
+        visibility: hidden !important;
+      }
+
+      .no-print,
+      .no-print * {
+        display: none !important;
+      }
+
+      #documentPaper,
+      #documentPaper * {
+        visibility: visible !important;
+      }
+
+      #documentPaper {
+        position: absolute !important;
+        top: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        width: 210mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 12mm 11mm !important;
+        box-shadow: none !important;
+        transform: none !important;
+        overflow: visible !important;
+      }
+
+      .paper-scale-frame,
+      .paper-viewport,
+      .preview-card,
+      .editor-workspace,
+      .app-shell {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        overflow: visible !important;
+      }
+
+      .document-basmala {
+        height: 22mm !important;
+      }
+
+      .basmala-placeholder {
+        border: 0 !important;
+        color: transparent !important;
+        background: transparent !important;
+      }
+
+      .official-table th,
+      .official-table td,
+      .total-table td {
+        border-color: #000 !important;
+      }
+
+      .official-table th {
+        background: #f3f4f6 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .official-table tr,
+      .total-table tr,
+      .person-block {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header no-print">
+      <div class="brand" aria-label="اسم التطبيق">
+        <div class="brand-mark" aria-hidden="true">ج</div>
+        <div>
+          <h1>منشئ الجداول الرسمية</h1>
+          <p>إنشاء، حفظ، تعديل وطباعة مستندات A4 رسمية باللغة العربية.</p>
+        </div>
+      </div>
+    </header>
+
+    <div id="appMessage" class="message no-print" role="alert"></div>
+
+    <main>
+      <section id="homeScreen" class="screen active" aria-labelledby="homeTitle">
+        <div class="home-hero no-print">
+          <div>
+            <h2 id="homeTitle">الشاشة الرئيسية</h2>
+            <p>ابدأ بإنشاء جدول جديد، أو افتح أحد الجداول المحفوظة للتعديل أو الطباعة. يتم حفظ البيانات محليًا داخل المتصفح.</p>
+          </div>
+          <button id="createTableBtn" class="btn btn-primary" type="button">إنشاء جدول</button>
+        </div>
+
+        <section class="saved-section no-print" aria-labelledby="savedTitle">
+          <div class="section-head">
+            <div>
+              <h3 id="savedTitle">الجداول المحفوظة</h3>
+              <p>كل بطاقة تمثل جدولًا محفوظًا مستقلًا، مع إجراءات الفتح والتعديل والطباعة والحذف.</p>
+            </div>
+            <span id="storageState" class="mode-badge">جارٍ تحميل التخزين…</span>
+          </div>
+
+          <div id="savedTablesList" class="cards-grid" aria-live="polite"></div>
+
+          <div id="emptyState" class="empty-state hidden">
+            <strong>لا توجد جداول محفوظة حتى الآن.</strong>
+            <span>اضغط على زر «إنشاء جدول» لإعداد أول مستند رسمي وحفظه هنا.</span>
+            <button id="emptyCreateBtn" class="btn btn-soft" type="button">إنشاء جدول</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="editorScreen" class="screen" aria-labelledby="editorTitle">
+        <div class="toolbar no-print">
+          <div>
+            <strong id="editorTitle">معاينة جدول رسمي</strong>
+            <div id="modeBadge" class="mode-badge" style="margin-top: 6px;">وضع التحرير</div>
+          </div>
+          <div class="toolbar-actions">
+            <button id="backHomeBtn" class="btn btn-secondary" type="button">العودة للرئيسية</button>
+            <button id="editCurrentBtn" class="btn btn-soft hidden" type="button">تعديل</button>
+            <button id="printCurrentBtn" class="btn btn-ghost" type="button">طباعة</button>
+            <button id="saveCurrentBtn" class="btn btn-primary" type="button">حفظ</button>
+          </div>
+        </div>
+
+        <div class="editor-workspace">
+          <aside id="controlPanel" class="control-panel no-print" aria-label="لوحة إدخال بيانات الجدول">
+            <div class="control-group">
+              <h3>بيانات المستند</h3>
+              <p class="control-hint">هذه الحقول تتحكم في المعاينة، ولا تظهر كأدوات تحكم عند الطباعة.</p>
+
+              <div class="file-box">
+                <label class="file-label" for="basmalaInput">صورة البسملة (PNG)</label>
+                <input id="basmalaInput" type="file" accept="image/png">
+                <div id="imageStatus" class="image-status">لم يتم اختيار صورة بعد.</div>
+              </div>
+
+              <div class="field">
+                <label for="titleInput">عنوان الجدول</label>
+                <input id="titleInput" class="input" type="text" placeholder="مثال: كشف المصروفات" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="section-head" style="margin-bottom: 0;">
+                <div>
+                  <h3>صفوف الجدول الرئيسي</h3>
+                  <p class="control-hint">المبالغ تُحسب تلقائيًا حتى مع فواصل الآلاف.</p>
+                </div>
+              </div>
+              <div id="rowsEditor" class="rows-editor"></div>
+              <div class="panel-footer">
+                <button id="addRowBtn" class="btn btn-soft" type="button">إضافة صف</button>
+                <div id="amountsNote" class="field-note">الإجمالي الحالي: 0</div>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <h3>الاسم والعمل</h3>
+              <p class="control-hint">تظهر القيم فقط داخل المستند. عند تركها فارغة تظهر الكلمات كإرشاد دون نقطتين.</p>
+              <div class="field">
+                <label for="personNameInput">الاسم</label>
+                <input id="personNameInput" class="input" type="text" placeholder="الاسم" autocomplete="off">
+              </div>
+              <div class="field">
+                <label for="personWorkInput">العمل</label>
+                <input id="personWorkInput" class="input" type="text" placeholder="العمل" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="panel-footer">
+              <button id="panelSaveBtn" class="btn btn-primary" type="button">حفظ الجدول</button>
+            </div>
+          </aside>
+
+          <section class="preview-card" aria-label="معاينة ورقة A4">
+            <div class="preview-head no-print">
+              <div>
+                <h3>معاينة A4</h3>
+                <span>المستند المطبوع يحتوي فقط على العناصر الظاهرة داخل الورقة البيضاء.</span>
+              </div>
+              <span>Portrait / عمودي</span>
+            </div>
+
+            <div class="paper-viewport">
+              <div id="paperScaleFrame" class="paper-scale-frame">
+                <article id="documentPaper" class="paper" aria-label="المستند الرسمي القابل للطباعة"></article>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const APP_VERSION = '1.0.0';
+      const DB_NAME = 'official_table_builder_db';
+      const DB_VERSION = 1;
+      const STORE_NAME = 'tables';
+      const LOCAL_STORAGE_KEY = 'official_table_builder_tables_v1';
+      const MAX_SUPPORTED_NUMBER = 999999999999999;
+      const DEFAULT_COLUMNS = Object.freeze([
+        { key: 'number', label: 'م' },
+        { key: 'description', label: 'البيان' },
+        { key: 'date', label: 'التاريخ' },
+        { key: 'amount', label: 'المبلغ' }
+      ]);
+
+      const elements = {};
+
+      const state = {
+        tables: [],
+        currentTable: null,
+        mode: 'edit',
+        storage: null,
+        storageName: 'IndexedDB',
+        dirty: false,
+        lastMessageTimer: null
+      };
+
+      class IndexedDbStorage {
+        constructor() {
+          this.db = null;
+        }
+
+        init() {
+          if (!('indexedDB' in window)) {
+            return Promise.reject(new Error('IndexedDB غير مدعوم في هذا المتصفح.'));
+          }
+
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+            request.onupgradeneeded = function (event) {
+              const db = event.target.result;
+              if (!db.objectStoreNames.contains(STORE_NAME)) {
+                const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                store.createIndex('updatedAt', 'updatedAt', { unique: false });
+              }
+            };
+
+            request.onsuccess = () => {
+              this.db = request.result;
+              this.db.onversionchange = () => this.db.close();
+              resolve();
+            };
+
+            request.onerror = () => reject(request.error || new Error('تعذر فتح قاعدة البيانات المحلية.'));
+            request.onblocked = () => reject(new Error('قاعدة البيانات المحلية محجوبة من تبويب آخر.'));
+          });
+        }
+
+        transaction(mode) {
+          if (!this.db) throw new Error('قاعدة البيانات غير جاهزة.');
+          return this.db.transaction(STORE_NAME, mode).objectStore(STORE_NAME);
+        }
+
+        getAll() {
+          return new Promise((resolve, reject) => {
+            const request = this.transaction('readonly').getAll();
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = () => reject(request.error || new Error('تعذر قراءة الجداول المحفوظة.'));
+          });
+        }
+
+        get(id) {
+          return new Promise((resolve, reject) => {
+            const request = this.transaction('readonly').get(id);
+            request.onsuccess = () => resolve(request.result || null);
+            request.onerror = () => reject(request.error || new Error('تعذر فتح الجدول المطلوب.'));
+          });
+        }
+
+        save(table) {
+          return new Promise((resolve, reject) => {
+            const request = this.transaction('readwrite').put(table);
+            request.onsuccess = () => resolve(table);
+            request.onerror = () => reject(request.error || new Error('تعذر حفظ الجدول.'));
+          });
+        }
+
+        delete(id) {
+          return new Promise((resolve, reject) => {
+            const request = this.transaction('readwrite').delete(id);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error || new Error('تعذر حذف الجدول.'));
+          });
+        }
+      }
+
+      class LocalStorageFallback {
+        init() {
+          try {
+            const testKey = LOCAL_STORAGE_KEY + '_test';
+            localStorage.setItem(testKey, '1');
+            localStorage.removeItem(testKey);
+            return Promise.resolve();
+          } catch (error) {
+            return Promise.reject(new Error('التخزين المحلي غير متاح في هذا المتصفح.'));
+          }
+        }
+
+        readAllRaw() {
+          try {
+            const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch (error) {
+            console.warn('تعذر قراءة بيانات localStorage:', error);
+            return [];
+          }
+        }
+
+        writeAllRaw(tables) {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tables));
+        }
+
+        async getAll() {
+          return this.readAllRaw();
+        }
+
+        async get(id) {
+          return this.readAllRaw().find((table) => table.id === id) || null;
+        }
+
+        async save(table) {
+          const tables = this.readAllRaw();
+          const index = tables.findIndex((item) => item.id === table.id);
+          if (index >= 0) {
+            tables[index] = table;
+          } else {
+            tables.push(table);
+          }
+          this.writeAllRaw(tables);
+          return table;
+        }
+
+        async delete(id) {
+          this.writeAllRaw(this.readAllRaw().filter((table) => table.id !== id));
+        }
+      }
+
+      class StorageRepository {
+        constructor() {
+          this.backend = null;
+          this.backendName = 'IndexedDB';
+        }
+
+        async init() {
+          const indexedDb = new IndexedDbStorage();
+          try {
+            await indexedDb.init();
+            this.backend = indexedDb;
+            this.backendName = 'IndexedDB';
+          } catch (firstError) {
+            console.warn('سيتم استخدام localStorage بدل IndexedDB:', firstError);
+            const fallback = new LocalStorageFallback();
+            await fallback.init();
+            this.backend = fallback;
+            this.backendName = 'localStorage';
+          }
+        }
+
+        async getAll() {
+          const tables = await this.backend.getAll();
+          return tables.map(normalizeTable).filter(Boolean).sort(sortByUpdatedDesc);
+        }
+
+        async get(id) {
+          return normalizeTable(await this.backend.get(id));
+        }
+
+        async save(table) {
+          return this.backend.save(normalizeTable(table));
+        }
+
+        async delete(id) {
+          return this.backend.delete(id);
+        }
+      }
+
+      function cacheElements() {
+        Object.assign(elements, {
+          homeScreen: document.getElementById('homeScreen'),
+          editorScreen: document.getElementById('editorScreen'),
+          createTableBtn: document.getElementById('createTableBtn'),
+          emptyCreateBtn: document.getElementById('emptyCreateBtn'),
+          savedTablesList: document.getElementById('savedTablesList'),
+          emptyState: document.getElementById('emptyState'),
+          storageState: document.getElementById('storageState'),
+          backHomeBtn: document.getElementById('backHomeBtn'),
+          editCurrentBtn: document.getElementById('editCurrentBtn'),
+          printCurrentBtn: document.getElementById('printCurrentBtn'),
+          saveCurrentBtn: document.getElementById('saveCurrentBtn'),
+          panelSaveBtn: document.getElementById('panelSaveBtn'),
+          modeBadge: document.getElementById('modeBadge'),
+          appMessage: document.getElementById('appMessage'),
+          controlPanel: document.getElementById('controlPanel'),
+          basmalaInput: document.getElementById('basmalaInput'),
+          imageStatus: document.getElementById('imageStatus'),
+          titleInput: document.getElementById('titleInput'),
+          rowsEditor: document.getElementById('rowsEditor'),
+          addRowBtn: document.getElementById('addRowBtn'),
+          amountsNote: document.getElementById('amountsNote'),
+          personNameInput: document.getElementById('personNameInput'),
+          personWorkInput: document.getElementById('personWorkInput'),
+          documentPaper: document.getElementById('documentPaper'),
+          paperScaleFrame: document.getElementById('paperScaleFrame')
+        });
+      }
+
+      function attachEvents() {
+        elements.createTableBtn.addEventListener('click', startNewTable);
+        elements.emptyCreateBtn.addEventListener('click', startNewTable);
+        elements.backHomeBtn.addEventListener('click', handleBackHome);
+        elements.editCurrentBtn.addEventListener('click', enableEditMode);
+        elements.printCurrentBtn.addEventListener('click', printCurrentDocument);
+        elements.saveCurrentBtn.addEventListener('click', saveCurrentTable);
+        elements.panelSaveBtn.addEventListener('click', saveCurrentTable);
+        elements.addRowBtn.addEventListener('click', addRow);
+
+        elements.titleInput.addEventListener('input', () => {
+          if (!state.currentTable) return;
+          state.currentTable.title = elements.titleInput.value;
+          markDirty();
+          renderDocument();
+        });
+
+        elements.personNameInput.addEventListener('input', () => {
+          if (!state.currentTable) return;
+          state.currentTable.personName = elements.personNameInput.value;
+          markDirty();
+          renderDocument();
+        });
+
+        elements.personWorkInput.addEventListener('input', () => {
+          if (!state.currentTable) return;
+          state.currentTable.personWork = elements.personWorkInput.value;
+          markDirty();
+          renderDocument();
+        });
+
+        elements.basmalaInput.addEventListener('change', handleBasmalaFile);
+
+        elements.rowsEditor.addEventListener('input', handleRowInput);
+        elements.rowsEditor.addEventListener('click', handleRowClick);
+        elements.rowsEditor.addEventListener('focusout', handleRowFocusOut);
+        elements.savedTablesList.addEventListener('click', handleSavedCardAction);
+        window.addEventListener('resize', schedulePaperScale);
+        window.addEventListener('beforeprint', () => {
+          document.documentElement.style.setProperty('--paper-scale', '1');
+        });
+      }
+
+      async function bootstrap() {
+        cacheElements();
+        attachEvents();
+        state.storage = new StorageRepository();
+
+        try {
+          await state.storage.init();
+          state.storageName = state.storage.backendName;
+          elements.storageState.textContent = 'التخزين: ' + state.storageName;
+          await loadHome();
+        } catch (error) {
+          elements.storageState.textContent = 'التخزين غير متاح';
+          showMessage('error', friendlyError(error, 'تعذر تهيئة التخزين المحلي.'));
+          renderHome([]);
+        }
+      }
+
+      async function loadHome(message) {
+        try {
+          state.tables = await state.storage.getAll();
+          renderHome(state.tables);
+          showScreen('home');
+          if (message) showMessage(message.type, message.text);
+        } catch (error) {
+          renderHome([]);
+          showScreen('home');
+          showMessage('error', friendlyError(error, 'تعذر تحميل الجداول المحفوظة.'));
+        }
+      }
+
+      function renderHome(tables) {
+        elements.savedTablesList.innerHTML = '';
+        const validTables = Array.isArray(tables) ? tables : [];
+        elements.emptyState.classList.toggle('hidden', validTables.length > 0);
+
+        const fragment = document.createDocumentFragment();
+        validTables.forEach((table) => {
+          const card = document.createElement('article');
+          card.className = 'table-card';
+          card.dataset.id = table.id;
+          const total = calculateRowsTotal(table.rows).total;
+          const updatedAt = formatDateTime(table.updatedAt || table.createdAt);
+          const rowCount = table.rows.filter(hasAnyRowData).length;
+
+          card.innerHTML = `
+            <div>
+              <h4>${escapeHtml(table.title || 'جدول بدون عنوان')}</h4>
+              <div class="card-meta">
+                <span>آخر تعديل: ${escapeHtml(updatedAt)}</span>
+                <span>عدد الصفوف: ${escapeHtml(String(rowCount))}</span>
+                <span>${table.basmalaDataUrl ? 'توجد صورة بسملة محفوظة' : 'لا توجد صورة بسملة'}</span>
+              </div>
+            </div>
+            <div class="card-total">${escapeHtml(formatNumber(total))} ريال يمني</div>
+            <div class="card-actions">
+              <button class="btn btn-soft" type="button" data-action="open">فتح</button>
+              <button class="btn btn-secondary" type="button" data-action="edit">تعديل</button>
+              <button class="btn btn-ghost" type="button" data-action="print">طباعة</button>
+              <button class="btn btn-danger" type="button" data-action="delete">حذف</button>
+            </div>
+          `;
+          fragment.appendChild(card);
+        });
+        elements.savedTablesList.appendChild(fragment);
+      }
+
+      function showScreen(screen) {
+        const isHome = screen === 'home';
+        elements.homeScreen.classList.toggle('active', isHome);
+        elements.editorScreen.classList.toggle('active', !isHome);
+        if (!isHome) schedulePaperScale();
+      }
+
+      function startNewTable() {
+        state.currentTable = createBlankTable();
+        state.mode = 'edit';
+        state.dirty = false;
+        renderEditor();
+        showScreen('editor');
+        showMessage('success', 'تم فتح شاشة إنشاء جدول جديد.');
+      }
+
+      async function openSavedTable(id, mode, options) {
+        try {
+          const table = await state.storage.get(id);
+          if (!table) {
+            showMessage('error', 'تعذر العثور على الجدول المطلوب. ربما تم حذفه.');
+            await loadHome();
+            return;
+          }
+          state.currentTable = cloneTable(table);
+          state.mode = mode || 'view';
+          state.dirty = false;
+          renderEditor();
+          showScreen('editor');
+
+          if (options && options.autoPrint) {
+            window.setTimeout(printCurrentDocument, 260);
+          }
+        } catch (error) {
+          showMessage('error', friendlyError(error, 'تعذر فتح الجدول المحفوظ.'));
+        }
+      }
+
+      function renderEditor() {
+        if (!state.currentTable) return;
+        const isEdit = state.mode === 'edit';
+        elements.controlPanel.classList.toggle('hidden', !isEdit);
+        elements.saveCurrentBtn.classList.toggle('hidden', !isEdit);
+        elements.panelSaveBtn.classList.toggle('hidden', !isEdit);
+        elements.editCurrentBtn.classList.toggle('hidden', isEdit || !state.currentTable.id);
+        elements.modeBadge.textContent = isEdit ? (state.currentTable.id ? 'وضع تعديل جدول محفوظ' : 'وضع إنشاء جدول جديد') : 'وضع فتح ومعاينة';
+
+        elements.titleInput.value = state.currentTable.title || '';
+        elements.personNameInput.value = state.currentTable.personName || '';
+        elements.personWorkInput.value = state.currentTable.personWork || '';
+        elements.basmalaInput.value = '';
+        updateImageStatus();
+        renderRowsEditor();
+        renderDocument();
+      }
+
+      function renderRowsEditor() {
+        if (!state.currentTable) return;
+        ensureAtLeastOneRow(state.currentTable);
+        elements.rowsEditor.innerHTML = '';
+
+        const fragment = document.createDocumentFragment();
+        state.currentTable.rows.forEach((row, index) => {
+          const parsed = parseAmount(row.amount);
+          const card = document.createElement('div');
+          card.className = 'row-card';
+          card.dataset.index = String(index);
+          card.innerHTML = `
+            <div class="row-card-head">
+              <span class="row-number">${index + 1}</span>
+              <button class="btn btn-danger" type="button" data-row-action="delete">حذف الصف</button>
+            </div>
+            <div class="row-fields">
+              <div class="row-field full">
+                <label>البيان</label>
+                <textarea class="textarea" data-field="description" placeholder="مثال: شراء أدوات مكتبية">${escapeHtml(row.description || '')}</textarea>
+              </div>
+              <div class="row-field">
+                <label>التاريخ</label>
+                <input class="input" data-field="date" type="text" placeholder="01/08/2026" value="${escapeAttribute(row.date || '')}">
+              </div>
+              <div class="row-field">
+                <label>المبلغ</label>
+                <input class="input amount-input ${parsed.valid ? '' : 'invalid'}" data-field="amount" type="text" inputmode="numeric" placeholder="50,000" value="${escapeAttribute(row.amount || '')}">
+                <div class="field-note">يمكن استخدام 50000 أو 50,000 أو الأرقام العربية.</div>
+              </div>
+            </div>
+          `;
+          fragment.appendChild(card);
+        });
+
+        elements.rowsEditor.appendChild(fragment);
+        updateAmountsNote();
+      }
+
+      function renderDocument() {
+        if (!state.currentTable) return;
+        const table = state.currentTable;
+        const rowsForPreview = table.rows.length ? table.rows : [createBlankRow()];
+        const totals = calculateRowsTotal(rowsForPreview);
+        const title = (table.title || '').trim();
+        const name = (table.personName || '').trim();
+        const work = (table.personWork || '').trim();
+
+        const bodyRows = rowsForPreview.map((row, index) => {
+          const amountText = displayAmount(row.amount);
+          return `
+            <tr>
+              <td class="col-number">${index + 1}</td>
+              <td class="col-description">${escapeHtml(row.description || '') || '&nbsp;'}</td>
+              <td class="col-date">${escapeHtml(row.date || '') || '&nbsp;'}</td>
+              <td class="col-amount amount-cell">${escapeHtml(amountText) || '&nbsp;'}</td>
+            </tr>
+          `;
+        }).join('');
+
+        elements.documentPaper.innerHTML = `
+          <div class="document-basmala">
+            ${table.basmalaDataUrl ? `<img src="${escapeAttribute(table.basmalaDataUrl)}" alt="البسملة">` : '<div class="basmala-placeholder">صورة البسملة PNG</div>'}
+          </div>
+
+          <h1 class="document-title ${title ? '' : 'placeholder-text'}">${escapeHtml(title || 'عنوان الجدول')}</h1>
+
+          <table class="official-table" aria-label="الجدول الرئيسي">
+            <colgroup>
+              <col class="col-number">
+              <col class="col-description">
+              <col class="col-date">
+              <col class="col-amount">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">م</th>
+                <th scope="col">البيان</th>
+                <th scope="col">التاريخ</th>
+                <th scope="col">المبلغ</th>
+              </tr>
+            </thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+
+          <table class="total-table" aria-label="جدول الإجمالي المستقل">
+            <tr>
+              <td class="total-label">الإجمالي</td>
+              <td class="total-number">${escapeHtml(formatNumber(totals.total))}</td>
+              <td class="total-words">${escapeHtml(arabicMoneyText(totals.total))}</td>
+            </tr>
+          </table>
+
+          <div class="person-block" aria-label="الاسم والعمل">
+            <div class="person-line ${name ? '' : 'empty'}">${escapeHtml(name || 'الاسم')}</div>
+            <div class="person-line ${work ? '' : 'empty'}">${escapeHtml(work || 'العمل')}</div>
+          </div>
+        `;
+
+        updateAmountsNote();
+        schedulePaperScale();
+      }
+
+      function handleRowInput(event) {
+        if (!state.currentTable || state.mode !== 'edit') return;
+        const target = event.target;
+        const field = target.dataset.field;
+        if (!field) return;
+        const card = target.closest('.row-card');
+        if (!card) return;
+        const index = Number(card.dataset.index);
+        if (!Number.isInteger(index) || !state.currentTable.rows[index]) return;
+
+        state.currentTable.rows[index][field] = target.value;
+        if (field === 'amount') {
+          target.classList.toggle('invalid', !parseAmount(target.value).valid);
+        }
+        markDirty();
+        renderDocument();
+      }
+
+      function handleRowClick(event) {
+        const actionTarget = event.target.closest('[data-row-action]');
+        if (!actionTarget || !state.currentTable || state.mode !== 'edit') return;
+        const card = actionTarget.closest('.row-card');
+        const index = Number(card && card.dataset.index);
+        if (!Number.isInteger(index)) return;
+
+        if (actionTarget.dataset.rowAction === 'delete') {
+          state.currentTable.rows.splice(index, 1);
+          ensureAtLeastOneRow(state.currentTable);
+          markDirty();
+          renderRowsEditor();
+          renderDocument();
+          showMessage('warning', 'تم حذف الصف من المعاينة. اضغط حفظ لتثبيت التعديل.');
+        }
+      }
+
+      function handleRowFocusOut(event) {
+        if (!state.currentTable || state.mode !== 'edit') return;
+        const target = event.target;
+        if (target.dataset.field !== 'amount') return;
+        const card = target.closest('.row-card');
+        const index = Number(card && card.dataset.index);
+        if (!Number.isInteger(index) || !state.currentTable.rows[index]) return;
+        const parsed = parseAmount(target.value);
+        if (parsed.valid && target.value.trim() !== '') {
+          const formatted = formatNumber(parsed.value);
+          target.value = formatted;
+          state.currentTable.rows[index].amount = formatted;
+          renderDocument();
+        }
+      }
+
+      function addRow() {
+        if (!state.currentTable || state.mode !== 'edit') return;
+        state.currentTable.rows.push(createBlankRow());
+        markDirty();
+        renderRowsEditor();
+        renderDocument();
+      }
+
+      async function handleBasmalaFile(event) {
+        if (!state.currentTable || state.mode !== 'edit') return;
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        const isPng = file.type === 'image/png' || /\.png$/i.test(file.name || '');
+        if (!isPng) {
+          elements.basmalaInput.value = '';
+          showMessage('error', 'يرجى اختيار صورة بصيغة PNG فقط للبسملة.');
+          return;
+        }
+
+        try {
+          const dataUrl = await readFileAsDataUrl(file);
+          if (!dataUrl.startsWith('data:image/png')) {
+            throw new Error('صيغة الصورة ليست PNG.');
+          }
+          state.currentTable.basmalaDataUrl = dataUrl;
+          state.currentTable.basmalaFileName = file.name || 'basmala.png';
+          markDirty();
+          updateImageStatus();
+          renderDocument();
+          showMessage('success', 'تم اختيار صورة البسملة وحفظها مؤقتًا داخل المعاينة.');
+        } catch (error) {
+          elements.basmalaInput.value = '';
+          showMessage('error', friendlyError(error, 'فشل قراءة صورة البسملة. حاول اختيار ملف PNG آخر.'));
+        }
+      }
+
+      async function saveCurrentTable() {
+        if (!state.currentTable || state.mode !== 'edit') return;
+        const validation = validateTableForSave(state.currentTable);
+        markInvalidRequiredFields(validation);
+
+        if (!validation.valid) {
+          showMessage('error', validation.errors.join(' '));
+          return;
+        }
+
+        const now = new Date().toISOString();
+        const tableToSave = normalizeTable({
+          ...state.currentTable,
+          id: state.currentTable.id || createId(),
+          appVersion: APP_VERSION,
+          title: state.currentTable.title.trim(),
+          personName: (state.currentTable.personName || '').trim(),
+          personWork: (state.currentTable.personWork || '').trim(),
+          columns: DEFAULT_COLUMNS.map((column) => ({ ...column })),
+          rows: validation.rows,
+          createdAt: state.currentTable.createdAt || now,
+          updatedAt: now
+        });
+
+        try {
+          await state.storage.save(tableToSave);
+          state.currentTable = cloneTable(tableToSave);
+          state.dirty = false;
+          await loadHome({ type: 'success', text: 'تم حفظ الجدول بنجاح وتحديث الشاشة الرئيسية.' });
+        } catch (error) {
+          showMessage('error', friendlyError(error, 'تعذر حفظ الجدول. تأكد من توفر مساحة كافية في المتصفح.'));
+        }
+      }
+
+      function markInvalidRequiredFields(validation) {
+        elements.titleInput.classList.toggle('invalid', validation.missingTitle);
+        if (validation.missingImage) {
+          elements.imageStatus.textContent = 'صورة البسملة مطلوبة بصيغة PNG قبل الحفظ.';
+          elements.imageStatus.style.color = 'var(--danger)';
+        } else {
+          updateImageStatus();
+        }
+
+        const amountInputs = elements.rowsEditor.querySelectorAll('[data-field="amount"]');
+        amountInputs.forEach((input, index) => {
+          input.classList.toggle('invalid', validation.invalidAmountRows.includes(index + 1));
+        });
+      }
+
+      function validateTableForSave(table) {
+        const errors = [];
+        const invalidAmountRows = [];
+        const cleanedRows = [];
+        const missingTitle = !(table.title || '').trim();
+        const missingImage = !table.basmalaDataUrl || !String(table.basmalaDataUrl).startsWith('data:image/png');
+
+        if (missingTitle) errors.push('يرجى إدخال عنوان الجدول.');
+        if (missingImage) errors.push('يرجى اختيار صورة البسملة بصيغة PNG.');
+
+        table.rows.forEach((row, index) => {
+          const normalizedRow = normalizeRow(row);
+          const hasData = hasAnyRowData(normalizedRow);
+          if (!hasData) return;
+
+          const amountText = String(normalizedRow.amount || '').trim();
+          const parsed = parseAmount(amountText);
+          if (!amountText || !parsed.valid) {
+            invalidAmountRows.push(index + 1);
+            errors.push('المبلغ في الصف رقم ' + (index + 1) + ' غير صالح أو فارغ.');
+            return;
+          }
+          cleanedRows.push({
+            description: normalizedRow.description.trim(),
+            date: normalizedRow.date.trim(),
+            amount: formatNumber(parsed.value)
+          });
+        });
+
+        if (cleanedRows.length === 0) {
+          errors.push('يرجى إدخال صف بيانات واحد على الأقل في الجدول الرئيسي.');
+        }
+
+        return {
+          valid: errors.length === 0,
+          errors,
+          rows: cleanedRows,
+          missingTitle,
+          missingImage,
+          invalidAmountRows
+        };
+      }
+
+      function enableEditMode() {
+        if (!state.currentTable) return;
+        state.mode = 'edit';
+        renderEditor();
+        showMessage('success', 'تم تفعيل وضع التعديل. بعد الانتهاء اضغط حفظ لتحديث نفس الجدول.');
+      }
+
+      function printCurrentDocument() {
+        if (!state.currentTable) return;
+        const validation = validateTableForSave(state.currentTable);
+        if (!validation.valid) {
+          if (state.mode === 'edit') markInvalidRequiredFields(validation);
+          showMessage('error', 'لا يمكن الطباعة قبل اكتمال المستند: ' + validation.errors.join(' '));
+          return;
+        }
+        renderDocument();
+        window.setTimeout(() => window.print(), 120);
+      }
+
+      async function handleBackHome() {
+        if (state.dirty) {
+          const confirmed = window.confirm('هناك تعديلات غير محفوظة. هل تريد العودة دون حفظها؟');
+          if (!confirmed) return;
+        }
+        state.currentTable = null;
+        state.dirty = false;
+        await loadHome();
+      }
+
+      async function handleSavedCardAction(event) {
+        const button = event.target.closest('[data-action]');
+        if (!button) return;
+        const card = button.closest('.table-card');
+        const id = card && card.dataset.id;
+        if (!id) return;
+
+        const action = button.dataset.action;
+        if (action === 'open') {
+          await openSavedTable(id, 'view');
+        } else if (action === 'edit') {
+          await openSavedTable(id, 'edit');
+        } else if (action === 'print') {
+          await openSavedTable(id, 'view', { autoPrint: true });
+        } else if (action === 'delete') {
+          await deleteSavedTable(id);
+        }
+      }
+
+      async function deleteSavedTable(id) {
+        const table = state.tables.find((item) => item.id === id);
+        const title = table && table.title ? '«' + table.title + '»' : 'هذا الجدول';
+        const confirmed = window.confirm('هل أنت متأكد من حذف ' + title + '؟ لا يمكن التراجع عن الحذف.');
+        if (!confirmed) return;
+
+        try {
+          await state.storage.delete(id);
+          await loadHome({ type: 'success', text: 'تم حذف الجدول المحدد فقط دون التأثير على بقية الجداول.' });
+        } catch (error) {
+          showMessage('error', friendlyError(error, 'تعذر حذف الجدول.'));
+        }
+      }
+
+      function createBlankTable() {
+        return {
+          id: null,
+          appVersion: APP_VERSION,
+          title: '',
+          basmalaDataUrl: '',
+          basmalaFileName: '',
+          columns: DEFAULT_COLUMNS.map((column) => ({ ...column })),
+          rows: [createBlankRow(), createBlankRow(), createBlankRow()],
+          personName: '',
+          personWork: '',
+          createdAt: null,
+          updatedAt: null
+        };
+      }
+
+      function createBlankRow() {
+        return { description: '', date: '', amount: '' };
+      }
+
+      function ensureAtLeastOneRow(table) {
+        if (!Array.isArray(table.rows) || table.rows.length === 0) {
+          table.rows = [createBlankRow()];
+        }
+      }
+
+      function normalizeTable(table) {
+        if (!table || typeof table !== 'object') return null;
+        const rows = Array.isArray(table.rows) ? table.rows.map(normalizeRow) : [];
+        return {
+          id: table.id || null,
+          appVersion: table.appVersion || APP_VERSION,
+          title: String(table.title || ''),
+          basmalaDataUrl: String(table.basmalaDataUrl || ''),
+          basmalaFileName: String(table.basmalaFileName || ''),
+          columns: Array.isArray(table.columns) && table.columns.length ? table.columns : DEFAULT_COLUMNS.map((column) => ({ ...column })),
+          rows: rows.length ? rows : [createBlankRow()],
+          personName: String(table.personName || ''),
+          personWork: String(table.personWork || ''),
+          createdAt: table.createdAt || null,
+          updatedAt: table.updatedAt || table.createdAt || null
+        };
+      }
+
+      function normalizeRow(row) {
+        row = row || {};
+        return {
+          description: String(row.description || ''),
+          date: String(row.date || ''),
+          amount: String(row.amount || '')
+        };
+      }
+
+      function cloneTable(table) {
+        return JSON.parse(JSON.stringify(table));
+      }
+
+      function sortByUpdatedDesc(a, b) {
+        return new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime();
+      }
+
+      function hasAnyRowData(row) {
+        return Boolean((row.description || '').trim() || (row.date || '').trim() || (row.amount || '').trim());
+      }
+
+      function parseAmount(value) {
+        const original = String(value == null ? '' : value).trim();
+        if (!original) return { valid: true, value: 0, empty: true };
+        const normalizedDigits = normalizeDigits(original);
+        const compact = normalizedDigits.replace(/[\s,،٬_]/g, '');
+
+        if (!/^\d+$/.test(compact)) {
+          return { valid: false, value: 0, empty: false };
+        }
+
+        const numericValue = Number(compact);
+        if (!Number.isSafeInteger(numericValue) || numericValue > MAX_SUPPORTED_NUMBER) {
+          return { valid: false, value: 0, empty: false };
+        }
+
+        return { valid: true, value: numericValue, empty: false };
+      }
+
+      function normalizeDigits(value) {
+        const arabicZero = '٠'.charCodeAt(0);
+        const persianZero = '۰'.charCodeAt(0);
+        return String(value).replace(/[٠-٩۰-۹]/g, (digit) => {
+          const code = digit.charCodeAt(0);
+          if (code >= arabicZero && code <= arabicZero + 9) return String(code - arabicZero);
+          return String(code - persianZero);
+        });
+      }
+
+      function calculateRowsTotal(rows) {
+        let total = 0;
+        const invalidRows = [];
+        (Array.isArray(rows) ? rows : []).forEach((row, index) => {
+          const amount = row && row.amount;
+          if (!String(amount || '').trim()) return;
+          const parsed = parseAmount(amount);
+          if (parsed.valid) {
+            total += parsed.value;
+          } else {
+            invalidRows.push(index + 1);
+          }
+        });
+        return { total, invalidRows };
+      }
+
+      function displayAmount(value) {
+        const text = String(value || '').trim();
+        if (!text) return '';
+        const parsed = parseAmount(text);
+        return parsed.valid ? formatNumber(parsed.value) : text;
+      }
+
+      function formatNumber(value) {
+        const number = Number(value) || 0;
+        return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(number);
+      }
+
+      function arabicMoneyText(value) {
+        const number = Number(value) || 0;
+        if (!Number.isSafeInteger(number) || number < 0 || number > MAX_SUPPORTED_NUMBER) {
+          return 'رقم غير مدعوم';
+        }
+        if (number === 0) return 'صفر ريال يمني فقط لا غير';
+        if (number === 1) return 'ريال يمني واحد فقط لا غير';
+        if (number === 2) return 'ريالان يمنيان فقط لا غير';
+        const words = numberToArabicWords(number);
+        if (number >= 3 && number <= 10) {
+          return words + ' ريالات يمنية فقط لا غير';
+        }
+        return words + ' ريال يمني فقط لا غير';
+      }
+
+      function numberToArabicWords(number) {
+        if (number === 0) return 'صفر';
+        const scales = [
+          null,
+          { singular: 'ألف', dual: 'ألفان', plural: 'آلاف' },
+          { singular: 'مليون', dual: 'مليونان', plural: 'ملايين' },
+          { singular: 'مليار', dual: 'ملياران', plural: 'مليارات' },
+          { singular: 'تريليون', dual: 'تريليونان', plural: 'تريليونات' }
+        ];
+
+        const chunks = [];
+        let remaining = number;
+        while (remaining > 0) {
+          chunks.push(remaining % 1000);
+          remaining = Math.floor(remaining / 1000);
+        }
+
+        const parts = [];
+        for (let index = chunks.length - 1; index >= 0; index -= 1) {
+          const chunk = chunks[index];
+          if (!chunk) continue;
+          parts.push(convertChunkWithScale(chunk, index, scales[index]));
+        }
+        return parts.join(' و');
+      }
+
+      function convertChunkWithScale(chunk, scaleIndex, scale) {
+        if (scaleIndex === 0 || !scale) return convertLessThanThousand(chunk);
+        if (chunk === 1) return scale.singular;
+        if (chunk === 2) return scale.dual;
+        if (chunk >= 3 && chunk <= 10) return convertLessThanThousand(chunk) + ' ' + scale.plural;
+        return convertLessThanThousand(chunk) + ' ' + scale.singular;
+      }
+
+      function convertLessThanThousand(number) {
+        const hundreds = ['', 'مائة', 'مائتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+        const hundred = Math.floor(number / 100);
+        const rest = number % 100;
+        const parts = [];
+        if (hundred) parts.push(hundreds[hundred]);
+        if (rest) parts.push(convertLessThanHundred(rest));
+        return parts.join(' و');
+      }
+
+      function convertLessThanHundred(number) {
+        const ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
+        const teens = {
+          10: 'عشرة',
+          11: 'أحد عشر',
+          12: 'اثنا عشر',
+          13: 'ثلاثة عشر',
+          14: 'أربعة عشر',
+          15: 'خمسة عشر',
+          16: 'ستة عشر',
+          17: 'سبعة عشر',
+          18: 'ثمانية عشر',
+          19: 'تسعة عشر'
+        };
+        const tens = ['', '', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+
+        if (number < 10) return ones[number];
+        if (number < 20) return teens[number];
+        const unit = number % 10;
+        const ten = Math.floor(number / 10);
+        if (!unit) return tens[ten];
+        return ones[unit] + ' و' + tens[ten];
+      }
+
+      function updateImageStatus() {
+        if (!state.currentTable) return;
+        elements.imageStatus.style.color = '';
+        if (state.currentTable.basmalaDataUrl) {
+          elements.imageStatus.textContent = 'تم اختيار صورة بسملة' + (state.currentTable.basmalaFileName ? ': ' + state.currentTable.basmalaFileName : ' محفوظة.') ;
+        } else {
+          elements.imageStatus.textContent = 'لم يتم اختيار صورة بعد.';
+        }
+      }
+
+      function updateAmountsNote() {
+        if (!state.currentTable) return;
+        const totals = calculateRowsTotal(state.currentTable.rows);
+        let note = 'الإجمالي الحالي: ' + formatNumber(totals.total) + ' — ' + arabicMoneyText(totals.total);
+        if (totals.invalidRows.length) {
+          note += ' | توجد مبالغ غير صالحة في الصفوف: ' + totals.invalidRows.join('، ');
+          elements.amountsNote.style.color = 'var(--danger)';
+        } else {
+          elements.amountsNote.style.color = '';
+        }
+        elements.amountsNote.textContent = note;
+      }
+
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ''));
+          reader.onerror = () => reject(reader.error || new Error('تعذرت قراءة الملف.'));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function createId() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+          return window.crypto.randomUUID();
+        }
+        return 'table-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+      }
+
+      function markDirty() {
+        state.dirty = true;
+      }
+
+      function showMessage(type, text) {
+        clearTimeout(state.lastMessageTimer);
+        elements.appMessage.className = 'message no-print show ' + (type || 'success');
+        elements.appMessage.textContent = text;
+        state.lastMessageTimer = window.setTimeout(() => {
+          elements.appMessage.classList.remove('show');
+        }, type === 'error' ? 9000 : 5200);
+      }
+
+      function friendlyError(error, fallback) {
+        if (!error) return fallback;
+        return error.message || fallback;
+      }
+
+      function formatDateTime(value) {
+        if (!value) return 'غير محدد';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return 'غير محدد';
+        try {
+          return new Intl.DateTimeFormat('ar-YE', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit'
+          }).format(date);
+        } catch (error) {
+          return date.toLocaleString('ar');
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replace(/`/g, '&#096;');
+      }
+
+      function schedulePaperScale() {
+        window.requestAnimationFrame(updatePaperScale);
+      }
+
+      function updatePaperScale() {
+        if (!elements.documentPaper || !elements.paperScaleFrame || !elements.editorScreen.classList.contains('active')) return;
+        const viewport = elements.paperScaleFrame.parentElement;
+        const naturalWidth = elements.documentPaper.offsetWidth || 794;
+        const availableWidth = Math.max(280, viewport.clientWidth - 24);
+        const scale = Math.min(1, availableWidth / naturalWidth);
+        document.documentElement.style.setProperty('--paper-scale', String(scale));
+        const naturalHeight = Math.max(elements.documentPaper.scrollHeight, Math.round(297 * 96 / 25.4));
+        elements.paperScaleFrame.style.height = Math.ceil(naturalHeight * scale) + 'px';
+      }
+
+      document.addEventListener('DOMContentLoaded', bootstrap);
+    })();
+  </script>
+</body>
+</html>
