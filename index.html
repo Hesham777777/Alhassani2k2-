@@ -3,2022 +3,834 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>منشئ الجداول الرسمية</title>
+  <title>طابعة الصور الاحترافية - طباعة متعددة على A4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #f3f6fb;
-      --surface: #ffffff;
-      --surface-soft: #f8fafc;
-      --text: #172033;
-      --muted: #64748b;
-      --line: #d9e2ec;
-      --primary: #166534;
-      --primary-dark: #14532d;
-      --primary-soft: #dcfce7;
-      --danger: #b91c1c;
-      --danger-soft: #fee2e2;
-      --warning: #a16207;
-      --warning-soft: #fef3c7;
-      --shadow: 0 18px 45px rgba(15, 23, 42, 0.11);
-      --radius: 16px;
-      --paper-scale: 1;
-      font-family: Tahoma, Arial, "Segoe UI", sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      min-height: 100%;
-    }
-
-    body {
-      margin: 0;
-      background: radial-gradient(circle at top right, #e8f5ee 0, transparent 36%), var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-    }
-
-    button,
-    input,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    button:disabled,
-    input:disabled,
-    textarea:disabled {
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .app-shell {
-      width: min(1180px, calc(100% - 24px));
-      margin: 0 auto;
-      padding: 18px 0 34px;
-    }
-
-    .app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 18px 20px;
-      margin-bottom: 18px;
-      background: rgba(255, 255, 255, 0.86);
-      border: 1px solid rgba(217, 226, 236, 0.9);
-      border-radius: var(--radius);
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
-      backdrop-filter: blur(10px);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-mark {
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--primary), #22c55e);
-      color: #fff;
-      font-weight: 800;
-      box-shadow: 0 10px 20px rgba(22, 101, 52, 0.25);
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: clamp(1.15rem, 1.5vw, 1.45rem);
-      line-height: 1.3;
-    }
-
-    .brand p {
-      margin: 2px 0 0;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .screen {
-      display: none;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    .home-hero,
-    .saved-section,
-    .control-panel,
-    .toolbar,
-    .message,
-    .preview-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
-    .home-hero {
-      padding: clamp(20px, 4vw, 34px);
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .home-hero h2 {
-      margin: 0 0 8px;
-      font-size: clamp(1.35rem, 2.2vw, 2rem);
-    }
-
-    .home-hero p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 62ch;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-height: 42px;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-      white-space: nowrap;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 10px 20px rgba(22, 101, 52, 0.22);
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-    }
-
-    .btn-secondary {
-      background: #e2e8f0;
-      color: #1e293b;
-    }
-
-    .btn-soft {
-      background: var(--primary-soft);
-      color: var(--primary-dark);
-    }
-
-    .btn-danger {
-      background: var(--danger-soft);
-      color: var(--danger);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid var(--line);
-      color: #334155;
-    }
-
-    .saved-section {
-      padding: 20px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .section-head h3,
-    .control-group h3 {
-      margin: 0;
-      font-size: 1.12rem;
-    }
-
-    .section-head p,
-    .control-hint {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
-      gap: 14px;
-    }
-
-    .table-card {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 15px;
-      background: linear-gradient(180deg, #fff, #fbfdff);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      min-height: 205px;
-    }
-
-    .table-card h4 {
-      margin: 0;
-      font-size: 1.05rem;
-      overflow-wrap: anywhere;
-    }
-
-    .card-meta {
-      display: grid;
-      gap: 6px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .card-total {
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: #f1f5f9;
-      color: #0f172a;
-      font-weight: 700;
-      direction: ltr;
-      text-align: right;
-      unicode-bidi: plaintext;
-    }
-
-    .card-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: auto;
-    }
-
-    .empty-state {
-      display: grid;
-      place-items: center;
-      text-align: center;
-      gap: 10px;
-      padding: 34px 18px;
-      border: 1px dashed #cbd5e1;
-      border-radius: 14px;
-      background: var(--surface-soft);
-      color: var(--muted);
-    }
-
-    .empty-state strong {
-      display: block;
-      color: var(--text);
-      font-size: 1.05rem;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px;
-      margin-bottom: 12px;
-      position: sticky;
-      top: 8px;
-      z-index: 30;
-    }
-
-    .toolbar-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .mode-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #f1f5f9;
-      color: #334155;
-      font-weight: 700;
-      font-size: 0.92rem;
-    }
-
-    .message {
-      display: none;
-      margin-bottom: 12px;
-      padding: 12px 14px;
-      box-shadow: none;
-      font-weight: 700;
-    }
-
-    .message.show {
-      display: block;
-    }
-
-    .message.success {
-      background: var(--primary-soft);
-      border-color: #bbf7d0;
-      color: var(--primary-dark);
-    }
-
-    .message.error {
-      background: var(--danger-soft);
-      border-color: #fecaca;
-      color: var(--danger);
-    }
-
-    .message.warning {
-      background: var(--warning-soft);
-      border-color: #fde68a;
-      color: var(--warning);
-    }
-
-    .editor-workspace {
-      display: grid;
-      grid-template-columns: minmax(310px, 380px) minmax(0, 1fr);
-      gap: 16px;
-      align-items: start;
-    }
-
-    .control-panel {
-      padding: 16px;
-      position: sticky;
-      top: 90px;
-      max-height: calc(100vh - 110px);
-      overflow: auto;
-    }
-
-    .control-group {
-      padding: 14px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .control-group:first-child {
-      padding-top: 0;
-    }
-
-    .control-group:last-child {
-      border-bottom: 0;
-      padding-bottom: 0;
-    }
-
-    .field {
-      display: grid;
-      gap: 6px;
-      margin-top: 12px;
-    }
-
-    .field label,
-    .file-label,
-    .row-field label {
-      color: #334155;
-      font-weight: 700;
-      font-size: 0.92rem;
-    }
-
-    .input,
-    .textarea {
-      width: 100%;
-      border: 1px solid #cbd5e1;
-      background: #fff;
-      color: var(--text);
-      border-radius: 11px;
-      min-height: 42px;
-      padding: 9px 11px;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .textarea {
-      min-height: 74px;
-      resize: vertical;
-    }
-
-    .input:focus,
-    .textarea:focus {
-      border-color: #22c55e;
-      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
-    }
-
-    .input.invalid,
-    .textarea.invalid {
-      border-color: var(--danger);
-      background: #fff7f7;
-    }
-
-    .file-box {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
-      padding: 12px;
-      border: 1px dashed #cbd5e1;
-      border-radius: 13px;
-      background: var(--surface-soft);
-    }
-
-    .file-box input[type="file"] {
-      width: 100%;
-    }
-
-    .image-status {
-      color: var(--muted);
-      font-size: 0.88rem;
-    }
-
-    .rows-editor {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .row-card {
-      border: 1px solid #dbe4ef;
-      border-radius: 13px;
-      background: #fbfdff;
-      padding: 12px;
-    }
-
-    .row-card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .row-number {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: #e2e8f0;
-      color: #0f172a;
-      font-weight: 800;
-    }
-
-    .row-fields {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .row-field.full {
-      grid-column: 1 / -1;
-    }
-
-    .amount-input {
-      direction: ltr;
-      text-align: right;
-      unicode-bidi: plaintext;
-    }
-
-    .field-note {
-      color: var(--muted);
-      font-size: 0.82rem;
-      margin-top: 4px;
-    }
-
-    .panel-footer {
-      display: grid;
-      gap: 9px;
-      margin-top: 14px;
-    }
-
-    .preview-card {
-      padding: 14px;
-      overflow: hidden;
-    }
-
-    .preview-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .preview-head h3 {
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .preview-head span {
-      color: var(--muted);
-      font-size: 0.88rem;
-    }
-
-    .paper-viewport {
-      width: 100%;
-      overflow: auto;
-      padding: 12px;
-      border-radius: 14px;
-      background: repeating-linear-gradient(45deg, #e9eef5, #e9eef5 10px, #eef3f8 10px, #eef3f8 20px);
-    }
-
-    .paper-scale-frame {
-      width: 100%;
-      min-height: calc(297mm * var(--paper-scale));
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .paper {
-      width: 210mm;
-      min-height: 297mm;
-      flex: 0 0 auto;
-      transform: scale(var(--paper-scale));
-      transform-origin: top center;
-      background: #fff;
-      color: #111827;
-      padding: 12mm 11mm;
-      box-shadow: 0 16px 38px rgba(15, 23, 42, 0.22);
-      direction: rtl;
-      font-family: Tahoma, Arial, "Segoe UI", sans-serif;
-      font-size: 11pt;
-      line-height: 1.45;
-    }
-
-    .document-basmala {
-      height: 22mm;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 4mm;
-    }
-
-    .document-basmala img {
-      display: block;
-      max-width: 88mm;
-      max-height: 20mm;
-      object-fit: contain;
-    }
-
-    .basmala-placeholder {
-      min-width: 74mm;
-      max-width: 92mm;
-      height: 18mm;
-      display: grid;
-      place-items: center;
-      border: 1px dashed #b6c2d2;
-      border-radius: 6px;
-      color: #64748b;
-      font-size: 10pt;
-      background: #f8fafc;
-    }
-
-    .document-title {
-      margin: 0 0 6mm;
-      text-align: center;
-      font-size: 16pt;
-      line-height: 1.35;
-      font-weight: 800;
-      color: #111827;
-      overflow-wrap: anywhere;
-    }
-
-    .document-title.placeholder-text {
-      color: #64748b;
-      font-weight: 700;
-    }
-
-    .official-table,
-    .total-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      color: #111827;
-    }
-
-    .official-table th,
-    .official-table td,
-    .total-table td {
-      border: 1px solid #111827;
-      padding: 5px 6px;
-      vertical-align: top;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    .official-table th {
-      background: #f1f5f9;
-      text-align: center;
-      font-weight: 800;
-    }
-
-    .official-table td {
-      min-height: 25px;
-    }
-
-    .official-table .col-number {
-      width: 9%;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .official-table .col-description {
-      width: 47%;
-    }
-
-    .official-table .col-date {
-      width: 20%;
-      text-align: center;
-    }
-
-    .official-table .col-amount {
-      width: 24%;
-      text-align: center;
-    }
-
-    .numeric,
-    .amount-cell {
-      direction: ltr;
-      unicode-bidi: plaintext;
-      text-align: center;
-      white-space: normal;
-    }
-
-    .total-table {
-      margin-top: 2.5mm;
-      font-weight: 800;
-    }
-
-    .total-table .total-label {
-      width: 18%;
-      text-align: center;
-      background: #f8fafc;
-    }
-
-    .total-table .total-number {
-      width: 22%;
-      direction: ltr;
-      unicode-bidi: plaintext;
-      text-align: center;
-    }
-
-    .total-table .total-words {
-      width: 60%;
-      text-align: center;
-      font-weight: 700;
-    }
-
-    .person-block {
-      width: 58mm;
-      margin-top: 5mm;
-      margin-right: auto;
-      margin-left: 0;
-      text-align: center;
-      font-size: 11pt;
-      font-weight: 700;
-      line-height: 1.85;
-      overflow-wrap: anywhere;
-    }
-
-    .person-line.empty {
-      color: #64748b;
-      font-weight: 600;
-    }
-
-    .print-only-note {
-      display: none;
-    }
-
-    @media (max-width: 980px) {
-      .editor-workspace {
-        grid-template-columns: 1fr;
+    :root{
+      --bg:#f6f7fb;
+      --bg-soft:#eef0f7;
+      --surface:#ffffff;
+      --surface-2:#f8fafc;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --line-strong:#cbd5e1;
+      --primary:#6366f1;
+      --primary-dark:#4f46e5;
+      --primary-soft:#eef2ff;
+      --primary-glow:0 10px 25px rgba(99,102,241,.25);
+      --success:#10b981;
+      --radius:18px;
+      --radius-sm:12px;
+      --shadow:0 16px 40px rgba(15,23,42,.08);
+      --shadow-lg:0 24px 60px rgba(15,23,42,.12);
+      --page-w:210mm;
+      --page-h:297mm;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 90% -10%, #e0e7ff 0%, transparent 60%),
+                  radial-gradient(900px 500px at -10% 10%, #ccfbf1 0%, transparent 50%),
+                  var(--bg);
+      color:var(--text);
+      font-family:"Tajawal", Tahoma, sans-serif;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    /* Header */
+    .topbar{
+      position:sticky; top:0; z-index:40;
+      backdrop-filter: blur(14px);
+      background: rgba(255,255,255,.82);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner{
+      width:min(1440px, calc(100% - 24px));
+      margin:0 auto;
+      height:72px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .brand-logo{
+      width:42px; height:42px; border-radius:12px;
+      background: linear-gradient(135deg, var(--primary), #8b5cf6 60%, #06b6d4);
+      display:grid; place-items:center; color:#fff; font-weight:800; font-size:20px;
+      box-shadow: var(--primary-glow);
+    }
+    .brand h1{margin:0; font-size:18px; font-weight:800; letter-spacing:-.2px}
+    .brand p{margin:0; color:var(--muted); font-size:13px; margin-top:-2px}
+    .top-actions{display:flex; gap:10px; align-items:center}
+    .btn{
+      border:0; border-radius:12px; min-height:44px; padding:10px 18px;
+      font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      transition:.18s ease; white-space:nowrap;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:var(--text); color:#fff; box-shadow:0 10px 20px rgba(15,23,42,.18)}
+    .btn-primary:hover{background:#1e293b}
+    .btn-ghost{background:var(--surface); border:1px solid var(--line); color:var(--text)}
+    .btn-ghost:hover{border-color:var(--line-strong); background:#fff}
+    .btn-soft{background:var(--primary-soft); color:var(--primary-dark)}
+    .btn-soft:hover{background:#e0e7ff}
+    .btn:disabled{opacity:.5; pointer-events:none}
+    /* Layout */
+    .app{
+      width:min(1440px, calc(100% - 24px));
+      margin:18px auto 30px;
+      display:grid;
+      grid-template-columns: 380px minmax(0,1fr);
+      gap:18px;
+      align-items:start;
+    }
+    @media (max-width: 1100px){
+      .app{grid-template-columns:1fr}
+    }
+    /* Sidebar */
+    .sidebar{display:grid; gap:16px; position:sticky; top:90px}
+    @media (max-width:1100px){ .sidebar{position:static} }
+    .card{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card-head{
+      padding:16px 18px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card-head h2{margin:0; font-size:15px; font-weight:800}
+    .card-head span{font-size:12px; color:var(--muted); background:var(--surface-2); padding:4px 10px; border-radius:999px; border:1px solid var(--line)}
+    .card-body{padding:16px 18px}
+    /* Upload */
+    .upload-zone{
+      border:2px dashed #c7d2fe;
+      background: linear-gradient(180deg, #f8faff, #ffffff);
+      border-radius:16px;
+      padding:18px;
+      text-align:center;
+      transition:.2s ease;
+      position:relative;
+    }
+    .upload-zone.drag{border-color:var(--primary); background:var(--primary-soft); transform:scale(1.01)}
+    .upload-icon{
+      width:56px; height:56px; margin:0 auto 10px; border-radius:14px;
+      background:#fff; border:1px solid var(--line);
+      display:grid; place-items:center; font-size:26px;
+      box-shadow:0 8px 20px rgba(15,23,42,.06);
+    }
+    .upload-zone h3{margin:0 0 4px; font-size:15px; font-weight:800}
+    .upload-zone p{margin:0 0 12px; color:var(--muted); font-size:13px}
+    .upload-zone input{position:absolute; inset:0; opacity:0; cursor:pointer}
+    .hint{font-size:12px; color:var(--muted); margin-top:10px}
+    /* Stats */
+    .stats{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;
+    }
+    .stat{
+      background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:10px 12px;
+    }
+    .stat b{display:block; font-size:20px; line-height:1; font-weight:800}
+    .stat span{font-size:12px; color:var(--muted)}
+    /* Controls */
+    .control-group{padding:14px 0; border-bottom:1px dashed var(--line)}
+    .control-group:first-child{padding-top:0}
+    .control-group:last-child{border-bottom:0; padding-bottom:0}
+    .control-group h3{margin:0 0 10px; font-size:13px; font-weight:800; color:#334155; letter-spacing:.2px}
+    .layout-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+    .layout-btn{
+      border:1px solid var(--line); background:#fff; border-radius:12px;
+      padding:10px 6px; text-align:center; transition:.15s; min-height:66px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    }
+    .layout-btn:hover{border-color:var(--primary); background:var(--primary-soft)}
+    .layout-btn.active{border-color:var(--primary); background:var(--text); color:#fff; box-shadow:var(--primary-glow)}
+    .layout-btn b{font-size:18px; line-height:1}
+    .layout-btn span{font-size:11px; opacity:.9}
+    .mini-dots{display:flex; gap:2px; flex-wrap:wrap; justify-content:center; max-width:36px}
+    .mini-dots i{width:5px; height:5px; border-radius:50%; background:currentColor; display:block}
+    .toggle-row{display:flex; gap:8px}
+    .toggle-btn{
+      flex:1; border:1px solid var(--line); background:#fff; border-radius:10px; padding:9px 10px; font-weight:700; font-size:13px;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+    }
+    .toggle-btn.active{background:var(--text); color:#fff; border-color:var(--text)}
+    .field{display:grid; gap:6px; margin-top:10px}
+    .field label{font-size:12px; font-weight:700; color:#334155}
+    .select, .input{
+      width:100%; min-height:42px; border:1px solid var(--line); background:#fff; border-radius:10px; padding:8px 12px; outline:none;
+      transition:.15s;
+    }
+    .select:focus, .input:focus{border-color:var(--primary); box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+    .two-col{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .check{
+      display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; cursor:pointer; transition:.15s;
+    }
+    .check:hover{border-color:var(--line-strong)}
+    .check input{width:18px; height:18px; accent-color:var(--primary)}
+    .check span{font-size:13px; font-weight:600}
+    /* Images list */
+    .thumbs{display:grid; gap:10px; max-height:380px; overflow:auto; padding-right:2px}
+    .thumbs::-webkit-scrollbar{width:6px}
+    .thumbs::-webkit-scrollbar-thumb{background:#cbd5e1; border-radius:999px}
+    .thumb{
+      display:flex; gap:10px; align-items:center; padding:8px; border:1px solid var(--line); border-radius:12px; background:#fff; transition:.15s;
+    }
+    .thumb.dragging{opacity:.5}
+    .thumb img{width:52px; height:52px; object-fit:cover; border-radius:8px; border:1px solid var(--line); flex:0 0 auto; background:#f1f5f9}
+    .thumb-info{flex:1; min-width:0}
+    .thumb-info b{display:block; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .thumb-info span{font-size:11px; color:var(--muted)}
+    .thumb-actions{display:flex; gap:4px}
+    .icon-btn{
+      width:32px; height:32px; border-radius:8px; border:1px solid var(--line); background:#fff; display:grid; place-items:center; font-size:14px;
+    }
+    .icon-btn:hover{background:var(--surface-2)}
+    .icon-btn.danger:hover{background:#fef2f2; border-color:#fecaca; color:#b91c1c}
+    .empty{
+      padding:18px; text-align:center; color:var(--muted); border:1px dashed var(--line); border-radius:12px; background:var(--surface-2);
+      font-size:13px;
+    }
+    /* Preview */
+    .preview-wrap{
+      display:grid; gap:16px;
+    }
+    .preview-toolbar{
+      background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .preview-toolbar h2{margin:0; font-size:14px; font-weight:800}
+    .preview-toolbar p{margin:0; font-size:12px; color:var(--muted)}
+    .pages{
+      display:grid; gap:28px; justify-items:center;
+      padding:24px;
+      background:
+        radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0) 0 0/22px 22px,
+        linear-gradient(180deg, #f1f5f9, #f8fafc);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      min-height:400px;
+    }
+    .a4-page{
+      width:min(100%, 760px);
+      aspect-ratio: 210/297;
+      background:#fff;
+      box-shadow: var(--shadow-lg);
+      border:1px solid #e2e8f0;
+      border-radius:6px;
+      overflow:hidden;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+    }
+    .a4-page.landscape{
+      aspect-ratio: 297/210;
+    }
+    .a4-page-inner{
+      flex:1;
+      display:grid;
+      width:100%; height:100%;
+      background:#fff;
+      position:relative;
+    }
+    .img-cell{
+      position:relative;
+      overflow:hidden;
+      background:#fff;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .img-cell img{
+      width:100%; height:100%;
+      display:block;
+      transition:.2s;
+    }
+    .img-cell .placeholder{
+      width:100%; height:100%; border:1px dashed #e2e8f0; display:grid; place-items:center; color:#94a3b8; font-size:12px;
+    }
+    .img-cell.bordered{border:1px solid #e2e8f0}
+    .img-cell.rounded{border-radius:8px}
+    .img-cell.rounded img{border-radius:8px}
+    .cut-marks .img-cell::before,
+    .cut-marks .img-cell::after{
+      content:""; position:absolute; background:#cbd5e1; z-index:2;
+    }
+    /* page number */
+    .page-number{
+      position:absolute; bottom:6px; left:50%; transform:translateX(-50%);
+      font-size:10px; color:#94a3b8; background:rgba(255,255,255,.9); padding:2px 8px; border-radius:999px; border:1px solid #e2e8f0;
+    }
+    /* Print */
+    @media print{
+      @page{
+        margin:0;
       }
-
-      .control-panel {
-        position: static;
-        max-height: none;
+      body{
+        background:#fff !important;
       }
-
-      .toolbar {
-        position: static;
+      .no-print{display:none !important}
+      .pages{
+        display:block !important;
+        padding:0 !important;
+        background:#fff !important;
+        border:0 !important;
+        gap:0 !important;
       }
+      .a4-page{
+        width:210mm !important;
+        height:297mm !important;
+        aspect-ratio:auto !important;
+        box-shadow:none !important;
+        border:0 !important;
+        border-radius:0 !important;
+        margin:0 !important;
+        page-break-after:always;
+        break-after:page;
+      }
+      .a4-page.landscape{
+        width:297mm !important;
+        height:210mm !important;
+      }
+      .a4-page:last-child{page-break-after:auto; break-after:auto}
+      .a4-page-inner{
+        width:100% !important;
+        height:100% !important;
+      }
+      .page-number{display:none !important}
     }
-
-    @media (max-width: 680px) {
-      .app-shell {
-        width: min(100% - 14px, 1180px);
-        padding-top: 8px;
-      }
-
-      .app-header,
-      .home-hero,
-      .section-head,
-      .toolbar,
-      .preview-head {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .home-hero {
-        grid-template-columns: 1fr;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .toolbar-actions,
-      .card-actions {
-        grid-template-columns: 1fr;
-        width: 100%;
-      }
-
-      .toolbar-actions {
-        display: grid;
-      }
-
-      .row-fields {
-        grid-template-columns: 1fr;
-      }
-
-      .paper-viewport {
-        padding: 8px;
-      }
-    }
-
-    @page {
-      size: A4 portrait;
-      margin: 0;
-    }
-
-    @media print {
-      :root {
-        --paper-scale: 1 !important;
-      }
-
-      html,
-      body {
-        width: 210mm;
-        min-height: 297mm;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-      }
-
-      body * {
-        visibility: hidden !important;
-      }
-
-      .no-print,
-      .no-print * {
-        display: none !important;
-      }
-
-      #documentPaper,
-      #documentPaper * {
-        visibility: visible !important;
-      }
-
-      #documentPaper {
-        position: absolute !important;
-        top: 0 !important;
-        right: 0 !important;
-        left: 0 !important;
-        width: 210mm !important;
-        min-height: 297mm !important;
-        margin: 0 !important;
-        padding: 12mm 11mm !important;
-        box-shadow: none !important;
-        transform: none !important;
-        overflow: visible !important;
-      }
-
-      .paper-scale-frame,
-      .paper-viewport,
-      .preview-card,
-      .editor-workspace,
-      .app-shell {
-        display: block !important;
-        width: auto !important;
-        height: auto !important;
-        min-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border: 0 !important;
-        box-shadow: none !important;
-        background: #fff !important;
-        overflow: visible !important;
-      }
-
-      .document-basmala {
-        height: 22mm !important;
-      }
-
-      .basmala-placeholder {
-        border: 0 !important;
-        color: transparent !important;
-        background: transparent !important;
-      }
-
-      .official-table th,
-      .official-table td,
-      .total-table td {
-        border-color: #000 !important;
-      }
-
-      .official-table th {
-        background: #f3f4f6 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
-      .official-table tr,
-      .total-table tr,
-      .person-block {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
+    /* Helpers */
+    .kbd{
+      font-size:11px; background:#0f172a; color:#fff; padding:2px 6px; border-radius:6px; font-weight:700;
     }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="app-header no-print">
-      <div class="brand" aria-label="اسم التطبيق">
-        <div class="brand-mark" aria-hidden="true">ج</div>
+  <header class="topbar no-print">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo">🖨️</div>
         <div>
-          <h1>منشئ الجداول الرسمية</h1>
-          <p>إنشاء، حفظ، تعديل وطباعة مستندات A4 رسمية باللغة العربية.</p>
+          <h1>طابعة الصور الاحترافية</h1>
+          <p>ارفع صورك • اختر عدد الصور في صفحة A4 • اطبع باحترافية</p>
         </div>
       </div>
-    </header>
+      <div class="top-actions">
+        <button id="clearAllBtn" class="btn btn-ghost" type="button">مسح الكل</button>
+        <button id="printBtn" class="btn btn-primary" type="button">🖨️ طباعة الآن</button>
+      </div>
+    </div>
+  </header>
 
-    <div id="appMessage" class="message no-print" role="alert"></div>
-
-    <main>
-      <section id="homeScreen" class="screen active" aria-labelledby="homeTitle">
-        <div class="home-hero no-print">
-          <div>
-            <h2 id="homeTitle">الشاشة الرئيسية</h2>
-            <p>ابدأ بإنشاء جدول جديد، أو افتح أحد الجداول المحفوظة للتعديل أو الطباعة. يتم حفظ البيانات محليًا داخل المتصفح.</p>
-          </div>
-          <button id="createTableBtn" class="btn btn-primary" type="button">إنشاء جدول</button>
+  <div class="app">
+    <aside class="sidebar no-print">
+      <!-- Upload -->
+      <div class="card">
+        <div class="card-head">
+          <h2>1. رفع الصور</h2>
+          <span id="imagesCountBadge">0 صورة</span>
         </div>
-
-        <section class="saved-section no-print" aria-labelledby="savedTitle">
-          <div class="section-head">
-            <div>
-              <h3 id="savedTitle">الجداول المحفوظة</h3>
-              <p>كل بطاقة تمثل جدولًا محفوظًا مستقلًا، مع إجراءات الفتح والتعديل والطباعة والحذف.</p>
-            </div>
-            <span id="storageState" class="mode-badge">جارٍ تحميل التخزين…</span>
+        <div class="card-body">
+          <div id="uploadZone" class="upload-zone">
+            <input id="fileInput" type="file" accept="image/*" multiple>
+            <div class="upload-icon">📸</div>
+            <h3>اسحب الصور هنا</h3>
+            <p>أو اضغط لاختيار صور متعددة من جهازك</p>
+            <button class="btn btn-soft" type="button">اختيار الصور</button>
+            <div class="hint">يدعم JPG, PNG, WEBP • يمكنك رفع مئات الصور دفعة واحدة</div>
           </div>
-
-          <div id="savedTablesList" class="cards-grid" aria-live="polite"></div>
-
-          <div id="emptyState" class="empty-state hidden">
-            <strong>لا توجد جداول محفوظة حتى الآن.</strong>
-            <span>اضغط على زر «إنشاء جدول» لإعداد أول مستند رسمي وحفظه هنا.</span>
-            <button id="emptyCreateBtn" class="btn btn-soft" type="button">إنشاء جدول</button>
-          </div>
-        </section>
-      </section>
-
-      <section id="editorScreen" class="screen" aria-labelledby="editorTitle">
-        <div class="toolbar no-print">
-          <div>
-            <strong id="editorTitle">معاينة جدول رسمي</strong>
-            <div id="modeBadge" class="mode-badge" style="margin-top: 6px;">وضع التحرير</div>
-          </div>
-          <div class="toolbar-actions">
-            <button id="backHomeBtn" class="btn btn-secondary" type="button">العودة للرئيسية</button>
-            <button id="editCurrentBtn" class="btn btn-soft hidden" type="button">تعديل</button>
-            <button id="printCurrentBtn" class="btn btn-ghost" type="button">طباعة</button>
-            <button id="saveCurrentBtn" class="btn btn-primary" type="button">حفظ</button>
+          <div class="stats">
+            <div class="stat"><b id="statImages">0</b><span>إجمالي الصور</span></div>
+            <div class="stat"><b id="statPages">0</b><span>عدد صفحات A4</span></div>
           </div>
         </div>
+      </div>
 
-        <div class="editor-workspace">
-          <aside id="controlPanel" class="control-panel no-print" aria-label="لوحة إدخال بيانات الجدول">
-            <div class="control-group">
-              <h3>بيانات المستند</h3>
-              <p class="control-hint">هذه الحقول تتحكم في المعاينة، ولا تظهر كأدوات تحكم عند الطباعة.</p>
-
-              <div class="file-box">
-                <label class="file-label" for="basmalaInput">صورة البسملة (PNG)</label>
-                <input id="basmalaInput" type="file" accept="image/png">
-                <div id="imageStatus" class="image-status">لم يتم اختيار صورة بعد.</div>
+      <!-- Layout -->
+      <div class="card">
+        <div class="card-head"><h2>2. تخطيط الطباعة</h2><span>A4</span></div>
+        <div class="card-body">
+          <div class="control-group">
+            <h3>عدد الصور في الصفحة الواحدة</h3>
+            <div class="layout-grid" id="layoutGrid"></div>
+            <div class="two-col" style="margin-top:10px">
+              <div class="field" style="margin:0">
+                <label>أعمدة</label>
+                <input id="colsInput" class="input" type="number" min="1" max="8" value="2">
               </div>
+              <div class="field" style="margin:0">
+                <label>صفوف</label>
+                <input id="rowsInput" class="input" type="number" min="1" max="8" value="2">
+              </div>
+            </div>
+          </div>
 
+          <div class="control-group">
+            <h3>اتجاه الورقة</h3>
+            <div class="toggle-row">
+              <button data-orient="portrait" class="toggle-btn active" type="button">↕️ عمودي</button>
+              <button data-orient="landscape" class="toggle-btn" type="button">↔️ أفقي</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <h3>الهوامش والمسافات</h3>
+            <div class="two-col">
               <div class="field">
-                <label for="titleInput">عنوان الجدول</label>
-                <input id="titleInput" class="input" type="text" placeholder="مثال: كشف المصروفات" autocomplete="off">
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="section-head" style="margin-bottom: 0;">
-                <div>
-                  <h3>صفوف الجدول الرئيسي</h3>
-                  <p class="control-hint">المبالغ تُحسب تلقائيًا حتى مع فواصل الآلاف.</p>
-                </div>
-              </div>
-              <div id="rowsEditor" class="rows-editor"></div>
-              <div class="panel-footer">
-                <button id="addRowBtn" class="btn btn-soft" type="button">إضافة صف</button>
-                <div id="amountsNote" class="field-note">الإجمالي الحالي: 0</div>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <h3>الاسم والعمل</h3>
-              <p class="control-hint">تظهر القيم فقط داخل المستند. عند تركها فارغة تظهر الكلمات كإرشاد دون نقطتين.</p>
-              <div class="field">
-                <label for="personNameInput">الاسم</label>
-                <input id="personNameInput" class="input" type="text" placeholder="الاسم" autocomplete="off">
+                <label>هامش الصفحة</label>
+                <select id="marginSelect" class="select">
+                  <option value="0mm">بدون هامش</option>
+                  <option value="3mm">صغير - 3mm</option>
+                  <option value="8mm" selected>متوسط - 8mm</option>
+                  <option value="12mm">كبير - 12mm</option>
+                  <option value="18mm">كبير جداً - 18mm</option>
+                </select>
               </div>
               <div class="field">
-                <label for="personWorkInput">العمل</label>
-                <input id="personWorkInput" class="input" type="text" placeholder="العمل" autocomplete="off">
+                <label>المسافة بين الصور</label>
+                <select id="gapSelect" class="select">
+                  <option value="0mm">بدون مسافة</option>
+                  <option value="2mm" selected>صغير - 2mm</option>
+                  <option value="4mm">متوسط - 4mm</option>
+                  <option value="8mm">كبير - 8mm</option>
+                </select>
               </div>
             </div>
-
-            <div class="panel-footer">
-              <button id="panelSaveBtn" class="btn btn-primary" type="button">حفظ الجدول</button>
+            <div class="field">
+              <label>طريقة عرض الصورة داخل المربع</label>
+              <select id="fitSelect" class="select">
+                <option value="contain" selected>احتواء كامل (يحافظ على النسبة)</option>
+                <option value="cover">ملء المربع (قد يقص الأطراف)</option>
+                <option value="fill">تمديد (قد يشوه الصورة)</option>
+              </select>
             </div>
-          </aside>
+          </div>
 
-          <section class="preview-card" aria-label="معاينة ورقة A4">
-            <div class="preview-head no-print">
-              <div>
-                <h3>معاينة A4</h3>
-                <span>المستند المطبوع يحتوي فقط على العناصر الظاهرة داخل الورقة البيضاء.</span>
-              </div>
-              <span>Portrait / عمودي</span>
+          <div class="control-group">
+            <h3>المظهر</h3>
+            <div style="display:grid; gap:8px">
+              <label class="check"><input id="borderCheck" type="checkbox"><span>إظهار إطار خفيف حول كل صورة</span></label>
+              <label class="check"><input id="roundedCheck" type="checkbox" checked><span>زوايا دائرية ناعمة</span></label>
+              <label class="check"><input id="cutCheck" type="checkbox"><span>إظهار علامات القص</span></label>
+              <label class="check"><input id="numbersCheck" type="checkbox" checked><span>ترقيم الصفحات في المعاينة</span></label>
             </div>
-
-            <div class="paper-viewport">
-              <div id="paperScaleFrame" class="paper-scale-frame">
-                <article id="documentPaper" class="paper" aria-label="المستند الرسمي القابل للطباعة"></article>
-              </div>
-            </div>
-          </section>
+          </div>
         </div>
-      </section>
+      </div>
+
+      <!-- Image list -->
+      <div class="card">
+        <div class="card-head">
+          <h2>3. إدارة الصور</h2>
+          <span class="kbd">سحب لإعادة الترتيب</span>
+        </div>
+        <div class="card-body">
+          <div id="thumbs" class="thumbs"></div>
+          <div id="emptyThumbs" class="empty">لم يتم رفع أي صور بعد. ابدأ برفع صورك وستظهر هنا مع إمكانية الحذف والتدوير وإعادة الترتيب.</div>
+          <div style="display:flex; gap:8px; margin-top:12px">
+            <button id="shuffleBtn" class="btn btn-ghost" style="flex:1" type="button">🔀 عشوائي</button>
+            <button id="reverseBtn" class="btn btn-ghost" style="flex:1" type="button">↩️ عكس الترتيب</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="preview-wrap">
+      <div class="preview-toolbar no-print">
+        <div>
+          <h2>معاينة مباشرة لصفحات A4</h2>
+          <p>كل صفحة هنا تمثل ورقة A4 حقيقية. ما تراه هو ما سيتم طباعته بالضبط.</p>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center">
+          <span id="previewInfo" style="font-size:12px; color:var(--muted); background:var(--surface-2); padding:6px 12px; border-radius:999px; border:1px solid var(--line)">0 صفحة • 0 صورة</span>
+          <button id="previewPrintBtn" class="btn btn-primary" type="button">طباعة</button>
+        </div>
+      </div>
+
+      <div id="pagesContainer" class="pages">
+        <div id="emptyPages" style="text-align:center; padding:40px 20px; color:var(--muted)">
+          <div style="font-size:48px; margin-bottom:12px">🖼️</div>
+          <div style="font-weight:800; color:var(--text); font-size:16px; margin-bottom:6px">لا توجد صور للمعاينة</div>
+          <div style="font-size:13px; max-width:360px; margin:0 auto">ارفع صورك من اللوحة الجانبية، ثم اختر عدد الصور في الصفحة، وستظهر المعاينة هنا فوراً جاهزة للطباعة على ورق A4.</div>
+        </div>
+      </div>
     </main>
   </div>
 
   <script>
-    (function () {
-      'use strict';
+    (function(){
+      const $ = s => document.querySelector(s);
+      const $$ = s => Array.from(document.querySelectorAll(s));
 
-      const APP_VERSION = '1.0.0';
-      const DB_NAME = 'official_table_builder_db';
-      const DB_VERSION = 1;
-      const STORE_NAME = 'tables';
-      const LOCAL_STORAGE_KEY = 'official_table_builder_tables_v1';
-      const MAX_SUPPORTED_NUMBER = 999999999999999;
-      const DEFAULT_COLUMNS = Object.freeze([
-        { key: 'number', label: 'م' },
-        { key: 'description', label: 'البيان' },
-        { key: 'date', label: 'التاريخ' },
-        { key: 'amount', label: 'المبلغ' }
-      ]);
+      const fileInput = $('#fileInput');
+      const uploadZone = $('#uploadZone');
+      const thumbs = $('#thumbs');
+      const emptyThumbs = $('#emptyThumbs');
+      const pagesContainer = $('#pagesContainer');
+      const emptyPages = $('#emptyPages');
+      const layoutGrid = $('#layoutGrid');
+      const colsInput = $('#colsInput');
+      const rowsInput = $('#rowsInput');
+      const marginSelect = $('#marginSelect');
+      const gapSelect = $('#gapSelect');
+      const fitSelect = $('#fitSelect');
+      const borderCheck = $('#borderCheck');
+      const roundedCheck = $('#roundedCheck');
+      const cutCheck = $('#cutCheck');
+      const numbersCheck = $('#numbersCheck');
+      const printBtn = $('#printBtn');
+      const previewPrintBtn = $('#previewPrintBtn');
+      const clearAllBtn = $('#clearAllBtn');
+      const shuffleBtn = $('#shuffleBtn');
+      const reverseBtn = $('#reverseBtn');
+      const imagesCountBadge = $('#imagesCountBadge');
+      const statImages = $('#statImages');
+      const statPages = $('#statPages');
+      const previewInfo = $('#previewInfo');
 
-      const elements = {};
+      let images = []; // {id, src, name, size, rotation, url}
+      let orientation = 'portrait';
 
-      const state = {
-        tables: [],
-        currentTable: null,
-        mode: 'edit',
-        storage: null,
-        storageName: 'IndexedDB',
-        dirty: false,
-        lastMessageTimer: null
-      };
+      const PRESETS = [
+        {n:1, label:'1', sub:'صورة'},
+        {n:2, label:'2', sub:'1×2'},
+        {n:4, label:'4', sub:'2×2'},
+        {n:6, label:'6', sub:'2×3'},
+        {n:8, label:'8', sub:'2×4'},
+        {n:9, label:'9', sub:'3×3'},
+        {n:12, label:'12', sub:'3×4'},
+        {n:16, label:'16', sub:'4×4'},
+      ];
 
-      class IndexedDbStorage {
-        constructor() {
-          this.db = null;
-        }
+      let perPage = 4;
+      let cols = 2, rows = 2;
 
-        init() {
-          if (!('indexedDB' in window)) {
-            return Promise.reject(new Error('IndexedDB غير مدعوم في هذا المتصفح.'));
+      function buildLayoutButtons(){
+        layoutGrid.innerHTML = '';
+        PRESETS.forEach(p=>{
+          const btn = document.createElement('button');
+          btn.type='button';
+          btn.className='layout-btn'+(p.n===perPage?' active':'');
+          btn.dataset.n = p.n;
+          const dots = document.createElement('div');
+          dots.className='mini-dots';
+          for(let i=0;i<Math.min(p.n,16);i++){
+            const d=document.createElement('i'); dots.appendChild(d);
           }
+          btn.innerHTML = `<b>${p.label}</b><span>${p.sub}</span>`;
+          btn.prepend(dots);
+          btn.addEventListener('click', ()=>{
+            perPage = p.n;
+            const g = gridForCount(p.n, orientation);
+            cols = g.cols; rows = g.rows;
+            colsInput.value = cols;
+            rowsInput.value = rows;
+            syncLayoutButtons();
+            renderPages();
+          });
+          layoutGrid.appendChild(btn);
+        });
+      }
+      function syncLayoutButtons(){
+        $$('.layout-btn').forEach(b=>{
+          b.classList.toggle('active', Number(b.dataset.n)===perPage);
+        });
+      }
+      function gridForCount(n, orient){
+        const map = {
+          1:{cols:1,rows:1},
+          2:{cols:1,rows:2},
+          4:{cols:2,rows:2},
+          6:{cols:2,rows:3},
+          8:{cols:2,rows:4},
+          9:{cols:3,rows:3},
+          12:{cols:3,rows:4},
+          16:{cols:4,rows:4},
+        };
+        let g = map[n] || {cols: Math.ceil(Math.sqrt(n)), rows: Math.ceil(n / Math.ceil(Math.sqrt(n)))};
+        if(orient==='landscape'){
+          // swap to be wider
+          if(g.cols < g.rows) [g.cols,g.rows] = [g.rows,g.cols];
+        } else {
+          if(g.cols > g.rows) [g.cols,g.rows] = [g.rows,g.cols];
+        }
+        // For custom perPage that doesn't match preset, recalc
+        if(!map[n]){
+          // ensure cols*rows >= n and close to square
+          let c = Math.ceil(Math.sqrt(n));
+          if(orient==='portrait' && c > Math.ceil(n/c)) c = Math.ceil(n/c);
+          // Actually simple: choose cols as per user or sqrt
+        }
+        return g;
+      }
 
-          return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
+      function addFiles(files){
+        const arr = Array.from(files).filter(f=>f.type.startsWith('image/'));
+        if(!arr.length) return;
+        arr.forEach(file=>{
+          const id = (crypto.randomUUID && crypto.randomUUID()) || 'img-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+          const url = URL.createObjectURL(file);
+          images.push({id, src:url, name:file.name, size:file.size, rotation:0, file});
+        });
+        renderAll();
+      }
 
-            request.onupgradeneeded = function (event) {
-              const db = event.target.result;
-              if (!db.objectStoreNames.contains(STORE_NAME)) {
-                const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-                store.createIndex('updatedAt', 'updatedAt', { unique: false });
+      function formatSize(bytes){
+        if(bytes<1024) return bytes+' B';
+        if(bytes<1024*1024) return (bytes/1024).toFixed(1)+' KB';
+        return (bytes/1024/1024).toFixed(1)+' MB';
+      }
+
+      function renderThumbs(){
+        thumbs.innerHTML='';
+        if(images.length===0){
+          emptyThumbs.style.display='block';
+          thumbs.style.display='none';
+        } else {
+          emptyThumbs.style.display='none';
+          thumbs.style.display='grid';
+          images.forEach((img, idx)=>{
+            const el = document.createElement('div');
+            el.className='thumb';
+            el.draggable=true;
+            el.dataset.id=img.id;
+            el.innerHTML=`
+              <img src="${img.src}" alt="">
+              <div class="thumb-info"><b>${escapeHtml(img.name)}</b><span>${formatSize(img.size)} • ${idx+1}</span></div>
+              <div class="thumb-actions">
+                <button class="icon-btn" data-action="rotate" title="تدوير">↻</button>
+                <button class="icon-btn danger" data-action="delete" title="حذف">✕</button>
+              </div>
+            `;
+            // drag events
+            el.addEventListener('dragstart', e=>{
+              e.dataTransfer.effectAllowed='move';
+              e.dataTransfer.setData('text/plain', img.id);
+              el.classList.add('dragging');
+            });
+            el.addEventListener('dragend', ()=> el.classList.remove('dragging'));
+            el.addEventListener('dragover', e=>{ e.preventDefault(); el.style.borderColor='#6366f1'; });
+            el.addEventListener('dragleave', ()=> el.style.borderColor='');
+            el.addEventListener('drop', e=>{
+              e.preventDefault();
+              el.style.borderColor='';
+              const draggedId = e.dataTransfer.getData('text/plain');
+              if(!draggedId || draggedId===img.id) return;
+              const fromIdx = images.findIndex(i=>i.id===draggedId);
+              const toIdx = images.findIndex(i=>i.id===img.id);
+              if(fromIdx>-1 && toIdx>-1){
+                const [moved] = images.splice(fromIdx,1);
+                images.splice(toIdx,0,moved);
+                renderAll();
               }
-            };
-
-            request.onsuccess = () => {
-              this.db = request.result;
-              this.db.onversionchange = () => this.db.close();
-              resolve();
-            };
-
-            request.onerror = () => reject(request.error || new Error('تعذر فتح قاعدة البيانات المحلية.'));
-            request.onblocked = () => reject(new Error('قاعدة البيانات المحلية محجوبة من تبويب آخر.'));
+            });
+            el.querySelector('[data-action="delete"]').addEventListener('click', ()=>{
+              URL.revokeObjectURL(img.src);
+              images = images.filter(i=>i.id!==img.id);
+              renderAll();
+            });
+            el.querySelector('[data-action="rotate"]').addEventListener('click', ()=>{
+              img.rotation = (img.rotation+90)%360;
+              renderAll();
+            });
+            thumbs.appendChild(el);
           });
         }
-
-        transaction(mode) {
-          if (!this.db) throw new Error('قاعدة البيانات غير جاهزة.');
-          return this.db.transaction(STORE_NAME, mode).objectStore(STORE_NAME);
-        }
-
-        getAll() {
-          return new Promise((resolve, reject) => {
-            const request = this.transaction('readonly').getAll();
-            request.onsuccess = () => resolve(request.result || []);
-            request.onerror = () => reject(request.error || new Error('تعذر قراءة الجداول المحفوظة.'));
-          });
-        }
-
-        get(id) {
-          return new Promise((resolve, reject) => {
-            const request = this.transaction('readonly').get(id);
-            request.onsuccess = () => resolve(request.result || null);
-            request.onerror = () => reject(request.error || new Error('تعذر فتح الجدول المطلوب.'));
-          });
-        }
-
-        save(table) {
-          return new Promise((resolve, reject) => {
-            const request = this.transaction('readwrite').put(table);
-            request.onsuccess = () => resolve(table);
-            request.onerror = () => reject(request.error || new Error('تعذر حفظ الجدول.'));
-          });
-        }
-
-        delete(id) {
-          return new Promise((resolve, reject) => {
-            const request = this.transaction('readwrite').delete(id);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error || new Error('تعذر حذف الجدول.'));
-          });
-        }
+        imagesCountBadge.textContent = `${images.length} صورة`;
+        statImages.textContent = images.length;
       }
 
-      class LocalStorageFallback {
-        init() {
-          try {
-            const testKey = LOCAL_STORAGE_KEY + '_test';
-            localStorage.setItem(testKey, '1');
-            localStorage.removeItem(testKey);
-            return Promise.resolve();
-          } catch (error) {
-            return Promise.reject(new Error('التخزين المحلي غير متاح في هذا المتصفح.'));
-          }
-        }
+      function renderPages(){
+        const total = images.length;
+        const per = cols*rows;
+        perPage = per; // keep sync
+        syncLayoutButtons();
 
-        readAllRaw() {
-          try {
-            const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (!raw) return [];
-            const parsed = JSON.parse(raw);
-            return Array.isArray(parsed) ? parsed : [];
-          } catch (error) {
-            console.warn('تعذر قراءة بيانات localStorage:', error);
-            return [];
-          }
-        }
+        const totalPages = total===0?0:Math.ceil(total/per);
+        statPages.textContent = totalPages;
+        previewInfo.textContent = `${totalPages} صفحة • ${total} صورة • ${cols}×${rows} في كل صفحة`;
 
-        writeAllRaw(tables) {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tables));
-        }
-
-        async getAll() {
-          return this.readAllRaw();
-        }
-
-        async get(id) {
-          return this.readAllRaw().find((table) => table.id === id) || null;
-        }
-
-        async save(table) {
-          const tables = this.readAllRaw();
-          const index = tables.findIndex((item) => item.id === table.id);
-          if (index >= 0) {
-            tables[index] = table;
-          } else {
-            tables.push(table);
-          }
-          this.writeAllRaw(tables);
-          return table;
-        }
-
-        async delete(id) {
-          this.writeAllRaw(this.readAllRaw().filter((table) => table.id !== id));
-        }
-      }
-
-      class StorageRepository {
-        constructor() {
-          this.backend = null;
-          this.backendName = 'IndexedDB';
-        }
-
-        async init() {
-          const indexedDb = new IndexedDbStorage();
-          try {
-            await indexedDb.init();
-            this.backend = indexedDb;
-            this.backendName = 'IndexedDB';
-          } catch (firstError) {
-            console.warn('سيتم استخدام localStorage بدل IndexedDB:', firstError);
-            const fallback = new LocalStorageFallback();
-            await fallback.init();
-            this.backend = fallback;
-            this.backendName = 'localStorage';
-          }
-        }
-
-        async getAll() {
-          const tables = await this.backend.getAll();
-          return tables.map(normalizeTable).filter(Boolean).sort(sortByUpdatedDesc);
-        }
-
-        async get(id) {
-          return normalizeTable(await this.backend.get(id));
-        }
-
-        async save(table) {
-          return this.backend.save(normalizeTable(table));
-        }
-
-        async delete(id) {
-          return this.backend.delete(id);
-        }
-      }
-
-      function cacheElements() {
-        Object.assign(elements, {
-          homeScreen: document.getElementById('homeScreen'),
-          editorScreen: document.getElementById('editorScreen'),
-          createTableBtn: document.getElementById('createTableBtn'),
-          emptyCreateBtn: document.getElementById('emptyCreateBtn'),
-          savedTablesList: document.getElementById('savedTablesList'),
-          emptyState: document.getElementById('emptyState'),
-          storageState: document.getElementById('storageState'),
-          backHomeBtn: document.getElementById('backHomeBtn'),
-          editCurrentBtn: document.getElementById('editCurrentBtn'),
-          printCurrentBtn: document.getElementById('printCurrentBtn'),
-          saveCurrentBtn: document.getElementById('saveCurrentBtn'),
-          panelSaveBtn: document.getElementById('panelSaveBtn'),
-          modeBadge: document.getElementById('modeBadge'),
-          appMessage: document.getElementById('appMessage'),
-          controlPanel: document.getElementById('controlPanel'),
-          basmalaInput: document.getElementById('basmalaInput'),
-          imageStatus: document.getElementById('imageStatus'),
-          titleInput: document.getElementById('titleInput'),
-          rowsEditor: document.getElementById('rowsEditor'),
-          addRowBtn: document.getElementById('addRowBtn'),
-          amountsNote: document.getElementById('amountsNote'),
-          personNameInput: document.getElementById('personNameInput'),
-          personWorkInput: document.getElementById('personWorkInput'),
-          documentPaper: document.getElementById('documentPaper'),
-          paperScaleFrame: document.getElementById('paperScaleFrame')
-        });
-      }
-
-      function attachEvents() {
-        elements.createTableBtn.addEventListener('click', startNewTable);
-        elements.emptyCreateBtn.addEventListener('click', startNewTable);
-        elements.backHomeBtn.addEventListener('click', handleBackHome);
-        elements.editCurrentBtn.addEventListener('click', enableEditMode);
-        elements.printCurrentBtn.addEventListener('click', printCurrentDocument);
-        elements.saveCurrentBtn.addEventListener('click', saveCurrentTable);
-        elements.panelSaveBtn.addEventListener('click', saveCurrentTable);
-        elements.addRowBtn.addEventListener('click', addRow);
-
-        elements.titleInput.addEventListener('input', () => {
-          if (!state.currentTable) return;
-          state.currentTable.title = elements.titleInput.value;
-          markDirty();
-          renderDocument();
+        // clear
+        Array.from(pagesContainer.children).forEach(ch=>{
+          if(ch!==emptyPages) ch.remove();
         });
 
-        elements.personNameInput.addEventListener('input', () => {
-          if (!state.currentTable) return;
-          state.currentTable.personName = elements.personNameInput.value;
-          markDirty();
-          renderDocument();
-        });
-
-        elements.personWorkInput.addEventListener('input', () => {
-          if (!state.currentTable) return;
-          state.currentTable.personWork = elements.personWorkInput.value;
-          markDirty();
-          renderDocument();
-        });
-
-        elements.basmalaInput.addEventListener('change', handleBasmalaFile);
-
-        elements.rowsEditor.addEventListener('input', handleRowInput);
-        elements.rowsEditor.addEventListener('click', handleRowClick);
-        elements.rowsEditor.addEventListener('focusout', handleRowFocusOut);
-        elements.savedTablesList.addEventListener('click', handleSavedCardAction);
-        window.addEventListener('resize', schedulePaperScale);
-        window.addEventListener('beforeprint', () => {
-          document.documentElement.style.setProperty('--paper-scale', '1');
-        });
-      }
-
-      async function bootstrap() {
-        cacheElements();
-        attachEvents();
-        state.storage = new StorageRepository();
-
-        try {
-          await state.storage.init();
-          state.storageName = state.storage.backendName;
-          elements.storageState.textContent = 'التخزين: ' + state.storageName;
-          await loadHome();
-        } catch (error) {
-          elements.storageState.textContent = 'التخزين غير متاح';
-          showMessage('error', friendlyError(error, 'تعذر تهيئة التخزين المحلي.'));
-          renderHome([]);
-        }
-      }
-
-      async function loadHome(message) {
-        try {
-          state.tables = await state.storage.getAll();
-          renderHome(state.tables);
-          showScreen('home');
-          if (message) showMessage(message.type, message.text);
-        } catch (error) {
-          renderHome([]);
-          showScreen('home');
-          showMessage('error', friendlyError(error, 'تعذر تحميل الجداول المحفوظة.'));
-        }
-      }
-
-      function renderHome(tables) {
-        elements.savedTablesList.innerHTML = '';
-        const validTables = Array.isArray(tables) ? tables : [];
-        elements.emptyState.classList.toggle('hidden', validTables.length > 0);
-
-        const fragment = document.createDocumentFragment();
-        validTables.forEach((table) => {
-          const card = document.createElement('article');
-          card.className = 'table-card';
-          card.dataset.id = table.id;
-          const total = calculateRowsTotal(table.rows).total;
-          const updatedAt = formatDateTime(table.updatedAt || table.createdAt);
-          const rowCount = table.rows.filter(hasAnyRowData).length;
-
-          card.innerHTML = `
-            <div>
-              <h4>${escapeHtml(table.title || 'جدول بدون عنوان')}</h4>
-              <div class="card-meta">
-                <span>آخر تعديل: ${escapeHtml(updatedAt)}</span>
-                <span>عدد الصفوف: ${escapeHtml(String(rowCount))}</span>
-                <span>${table.basmalaDataUrl ? 'توجد صورة بسملة محفوظة' : 'لا توجد صورة بسملة'}</span>
-              </div>
-            </div>
-            <div class="card-total">${escapeHtml(formatNumber(total))} ريال يمني</div>
-            <div class="card-actions">
-              <button class="btn btn-soft" type="button" data-action="open">فتح</button>
-              <button class="btn btn-secondary" type="button" data-action="edit">تعديل</button>
-              <button class="btn btn-ghost" type="button" data-action="print">طباعة</button>
-              <button class="btn btn-danger" type="button" data-action="delete">حذف</button>
-            </div>
-          `;
-          fragment.appendChild(card);
-        });
-        elements.savedTablesList.appendChild(fragment);
-      }
-
-      function showScreen(screen) {
-        const isHome = screen === 'home';
-        elements.homeScreen.classList.toggle('active', isHome);
-        elements.editorScreen.classList.toggle('active', !isHome);
-        if (!isHome) schedulePaperScale();
-      }
-
-      function startNewTable() {
-        state.currentTable = createBlankTable();
-        state.mode = 'edit';
-        state.dirty = false;
-        renderEditor();
-        showScreen('editor');
-        showMessage('success', 'تم فتح شاشة إنشاء جدول جديد.');
-      }
-
-      async function openSavedTable(id, mode, options) {
-        try {
-          const table = await state.storage.get(id);
-          if (!table) {
-            showMessage('error', 'تعذر العثور على الجدول المطلوب. ربما تم حذفه.');
-            await loadHome();
-            return;
-          }
-          state.currentTable = cloneTable(table);
-          state.mode = mode || 'view';
-          state.dirty = false;
-          renderEditor();
-          showScreen('editor');
-
-          if (options && options.autoPrint) {
-            window.setTimeout(printCurrentDocument, 260);
-          }
-        } catch (error) {
-          showMessage('error', friendlyError(error, 'تعذر فتح الجدول المحفوظ.'));
-        }
-      }
-
-      function renderEditor() {
-        if (!state.currentTable) return;
-        const isEdit = state.mode === 'edit';
-        elements.controlPanel.classList.toggle('hidden', !isEdit);
-        elements.saveCurrentBtn.classList.toggle('hidden', !isEdit);
-        elements.panelSaveBtn.classList.toggle('hidden', !isEdit);
-        elements.editCurrentBtn.classList.toggle('hidden', isEdit || !state.currentTable.id);
-        elements.modeBadge.textContent = isEdit ? (state.currentTable.id ? 'وضع تعديل جدول محفوظ' : 'وضع إنشاء جدول جديد') : 'وضع فتح ومعاينة';
-
-        elements.titleInput.value = state.currentTable.title || '';
-        elements.personNameInput.value = state.currentTable.personName || '';
-        elements.personWorkInput.value = state.currentTable.personWork || '';
-        elements.basmalaInput.value = '';
-        updateImageStatus();
-        renderRowsEditor();
-        renderDocument();
-      }
-
-      function renderRowsEditor() {
-        if (!state.currentTable) return;
-        ensureAtLeastOneRow(state.currentTable);
-        elements.rowsEditor.innerHTML = '';
-
-        const fragment = document.createDocumentFragment();
-        state.currentTable.rows.forEach((row, index) => {
-          const parsed = parseAmount(row.amount);
-          const card = document.createElement('div');
-          card.className = 'row-card';
-          card.dataset.index = String(index);
-          card.innerHTML = `
-            <div class="row-card-head">
-              <span class="row-number">${index + 1}</span>
-              <button class="btn btn-danger" type="button" data-row-action="delete">حذف الصف</button>
-            </div>
-            <div class="row-fields">
-              <div class="row-field full">
-                <label>البيان</label>
-                <textarea class="textarea" data-field="description" placeholder="مثال: شراء أدوات مكتبية">${escapeHtml(row.description || '')}</textarea>
-              </div>
-              <div class="row-field">
-                <label>التاريخ</label>
-                <input class="input" data-field="date" type="text" placeholder="01/08/2026" value="${escapeAttribute(row.date || '')}">
-              </div>
-              <div class="row-field">
-                <label>المبلغ</label>
-                <input class="input amount-input ${parsed.valid ? '' : 'invalid'}" data-field="amount" type="text" inputmode="numeric" placeholder="50,000" value="${escapeAttribute(row.amount || '')}">
-                <div class="field-note">يمكن استخدام 50000 أو 50,000 أو الأرقام العربية.</div>
-              </div>
-            </div>
-          `;
-          fragment.appendChild(card);
-        });
-
-        elements.rowsEditor.appendChild(fragment);
-        updateAmountsNote();
-      }
-
-      function renderDocument() {
-        if (!state.currentTable) return;
-        const table = state.currentTable;
-        const rowsForPreview = table.rows.length ? table.rows : [createBlankRow()];
-        const totals = calculateRowsTotal(rowsForPreview);
-        const title = (table.title || '').trim();
-        const name = (table.personName || '').trim();
-        const work = (table.personWork || '').trim();
-
-        const bodyRows = rowsForPreview.map((row, index) => {
-          const amountText = displayAmount(row.amount);
-          return `
-            <tr>
-              <td class="col-number">${index + 1}</td>
-              <td class="col-description">${escapeHtml(row.description || '') || '&nbsp;'}</td>
-              <td class="col-date">${escapeHtml(row.date || '') || '&nbsp;'}</td>
-              <td class="col-amount amount-cell">${escapeHtml(amountText) || '&nbsp;'}</td>
-            </tr>
-          `;
-        }).join('');
-
-        elements.documentPaper.innerHTML = `
-          <div class="document-basmala">
-            ${table.basmalaDataUrl ? `<img src="${escapeAttribute(table.basmalaDataUrl)}" alt="البسملة">` : '<div class="basmala-placeholder">صورة البسملة PNG</div>'}
-          </div>
-
-          <h1 class="document-title ${title ? '' : 'placeholder-text'}">${escapeHtml(title || 'عنوان الجدول')}</h1>
-
-          <table class="official-table" aria-label="الجدول الرئيسي">
-            <colgroup>
-              <col class="col-number">
-              <col class="col-description">
-              <col class="col-date">
-              <col class="col-amount">
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col">م</th>
-                <th scope="col">البيان</th>
-                <th scope="col">التاريخ</th>
-                <th scope="col">المبلغ</th>
-              </tr>
-            </thead>
-            <tbody>${bodyRows}</tbody>
-          </table>
-
-          <table class="total-table" aria-label="جدول الإجمالي المستقل">
-            <tr>
-              <td class="total-label">الإجمالي</td>
-              <td class="total-number">${escapeHtml(formatNumber(totals.total))}</td>
-              <td class="total-words">${escapeHtml(arabicMoneyText(totals.total))}</td>
-            </tr>
-          </table>
-
-          <div class="person-block" aria-label="الاسم والعمل">
-            <div class="person-line ${name ? '' : 'empty'}">${escapeHtml(name || 'الاسم')}</div>
-            <div class="person-line ${work ? '' : 'empty'}">${escapeHtml(work || 'العمل')}</div>
-          </div>
-        `;
-
-        updateAmountsNote();
-        schedulePaperScale();
-      }
-
-      function handleRowInput(event) {
-        if (!state.currentTable || state.mode !== 'edit') return;
-        const target = event.target;
-        const field = target.dataset.field;
-        if (!field) return;
-        const card = target.closest('.row-card');
-        if (!card) return;
-        const index = Number(card.dataset.index);
-        if (!Number.isInteger(index) || !state.currentTable.rows[index]) return;
-
-        state.currentTable.rows[index][field] = target.value;
-        if (field === 'amount') {
-          target.classList.toggle('invalid', !parseAmount(target.value).valid);
-        }
-        markDirty();
-        renderDocument();
-      }
-
-      function handleRowClick(event) {
-        const actionTarget = event.target.closest('[data-row-action]');
-        if (!actionTarget || !state.currentTable || state.mode !== 'edit') return;
-        const card = actionTarget.closest('.row-card');
-        const index = Number(card && card.dataset.index);
-        if (!Number.isInteger(index)) return;
-
-        if (actionTarget.dataset.rowAction === 'delete') {
-          state.currentTable.rows.splice(index, 1);
-          ensureAtLeastOneRow(state.currentTable);
-          markDirty();
-          renderRowsEditor();
-          renderDocument();
-          showMessage('warning', 'تم حذف الصف من المعاينة. اضغط حفظ لتثبيت التعديل.');
-        }
-      }
-
-      function handleRowFocusOut(event) {
-        if (!state.currentTable || state.mode !== 'edit') return;
-        const target = event.target;
-        if (target.dataset.field !== 'amount') return;
-        const card = target.closest('.row-card');
-        const index = Number(card && card.dataset.index);
-        if (!Number.isInteger(index) || !state.currentTable.rows[index]) return;
-        const parsed = parseAmount(target.value);
-        if (parsed.valid && target.value.trim() !== '') {
-          const formatted = formatNumber(parsed.value);
-          target.value = formatted;
-          state.currentTable.rows[index].amount = formatted;
-          renderDocument();
-        }
-      }
-
-      function addRow() {
-        if (!state.currentTable || state.mode !== 'edit') return;
-        state.currentTable.rows.push(createBlankRow());
-        markDirty();
-        renderRowsEditor();
-        renderDocument();
-      }
-
-      async function handleBasmalaFile(event) {
-        if (!state.currentTable || state.mode !== 'edit') return;
-        const file = event.target.files && event.target.files[0];
-        if (!file) return;
-
-        const isPng = file.type === 'image/png' || /\.png$/i.test(file.name || '');
-        if (!isPng) {
-          elements.basmalaInput.value = '';
-          showMessage('error', 'يرجى اختيار صورة بصيغة PNG فقط للبسملة.');
+        if(total===0){
+          emptyPages.style.display='block';
           return;
         }
+        emptyPages.style.display='none';
 
-        try {
-          const dataUrl = await readFileAsDataUrl(file);
-          if (!dataUrl.startsWith('data:image/png')) {
-            throw new Error('صيغة الصورة ليست PNG.');
+        const margin = marginSelect.value;
+        const gap = gapSelect.value;
+        const fit = fitSelect.value;
+        const bordered = borderCheck.checked;
+        const rounded = roundedCheck.checked;
+        const cut = cutCheck.checked;
+        const showNumbers = numbersCheck.checked;
+
+        for(let p=0;p<totalPages;p++){
+          const page = document.createElement('div');
+          page.className = 'a4-page'+(orientation==='landscape'?' landscape':'')+(cut?' cut-marks':'');
+          const inner = document.createElement('div');
+          inner.className='a4-page-inner';
+          inner.style.padding = margin;
+          inner.style.gap = gap;
+          inner.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+          inner.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+          const slice = images.slice(p*per, (p+1)*per);
+          for(let i=0;i<per;i++){
+            const cell = document.createElement('div');
+            cell.className='img-cell'+(bordered?' bordered':'')+(rounded?' rounded':'');
+            const imgData = slice[i];
+            if(imgData){
+              const img = document.createElement('img');
+              img.src = imgData.src;
+              img.alt = imgData.name;
+              img.style.objectFit = fit;
+              img.style.transform = `rotate(${imgData.rotation}deg)`;
+              // if rotated 90/270, need to handle contain size
+              if(imgData.rotation%180!==0){
+                // keep centered, adjust
+                img.style.width='100%';
+                img.style.height='100%';
+              }
+              cell.appendChild(img);
+            } else {
+              // empty placeholder (in print hide)
+              const ph = document.createElement('div');
+              ph.className='placeholder';
+              ph.textContent='';
+              cell.appendChild(ph);
+              cell.style.visibility='hidden';
+              cell.classList.add('no-print');
+            }
+            inner.appendChild(cell);
           }
-          state.currentTable.basmalaDataUrl = dataUrl;
-          state.currentTable.basmalaFileName = file.name || 'basmala.png';
-          markDirty();
-          updateImageStatus();
-          renderDocument();
-          showMessage('success', 'تم اختيار صورة البسملة وحفظها مؤقتًا داخل المعاينة.');
-        } catch (error) {
-          elements.basmalaInput.value = '';
-          showMessage('error', friendlyError(error, 'فشل قراءة صورة البسملة. حاول اختيار ملف PNG آخر.'));
-        }
-      }
 
-      async function saveCurrentTable() {
-        if (!state.currentTable || state.mode !== 'edit') return;
-        const validation = validateTableForSave(state.currentTable);
-        markInvalidRequiredFields(validation);
-
-        if (!validation.valid) {
-          showMessage('error', validation.errors.join(' '));
-          return;
-        }
-
-        const now = new Date().toISOString();
-        const tableToSave = normalizeTable({
-          ...state.currentTable,
-          id: state.currentTable.id || createId(),
-          appVersion: APP_VERSION,
-          title: state.currentTable.title.trim(),
-          personName: (state.currentTable.personName || '').trim(),
-          personWork: (state.currentTable.personWork || '').trim(),
-          columns: DEFAULT_COLUMNS.map((column) => ({ ...column })),
-          rows: validation.rows,
-          createdAt: state.currentTable.createdAt || now,
-          updatedAt: now
-        });
-
-        try {
-          await state.storage.save(tableToSave);
-          state.currentTable = cloneTable(tableToSave);
-          state.dirty = false;
-          await loadHome({ type: 'success', text: 'تم حفظ الجدول بنجاح وتحديث الشاشة الرئيسية.' });
-        } catch (error) {
-          showMessage('error', friendlyError(error, 'تعذر حفظ الجدول. تأكد من توفر مساحة كافية في المتصفح.'));
-        }
-      }
-
-      function markInvalidRequiredFields(validation) {
-        elements.titleInput.classList.toggle('invalid', validation.missingTitle);
-        if (validation.missingImage) {
-          elements.imageStatus.textContent = 'صورة البسملة مطلوبة بصيغة PNG قبل الحفظ.';
-          elements.imageStatus.style.color = 'var(--danger)';
-        } else {
-          updateImageStatus();
-        }
-
-        const amountInputs = elements.rowsEditor.querySelectorAll('[data-field="amount"]');
-        amountInputs.forEach((input, index) => {
-          input.classList.toggle('invalid', validation.invalidAmountRows.includes(index + 1));
-        });
-      }
-
-      function validateTableForSave(table) {
-        const errors = [];
-        const invalidAmountRows = [];
-        const cleanedRows = [];
-        const missingTitle = !(table.title || '').trim();
-        const missingImage = !table.basmalaDataUrl || !String(table.basmalaDataUrl).startsWith('data:image/png');
-
-        if (missingTitle) errors.push('يرجى إدخال عنوان الجدول.');
-        if (missingImage) errors.push('يرجى اختيار صورة البسملة بصيغة PNG.');
-
-        table.rows.forEach((row, index) => {
-          const normalizedRow = normalizeRow(row);
-          const hasData = hasAnyRowData(normalizedRow);
-          if (!hasData) return;
-
-          const amountText = String(normalizedRow.amount || '').trim();
-          const parsed = parseAmount(amountText);
-          if (!amountText || !parsed.valid) {
-            invalidAmountRows.push(index + 1);
-            errors.push('المبلغ في الصف رقم ' + (index + 1) + ' غير صالح أو فارغ.');
-            return;
+          page.appendChild(inner);
+          if(showNumbers){
+            const num = document.createElement('div');
+            num.className='page-number no-print';
+            num.textContent = `صفحة ${p+1} من ${totalPages}`;
+            page.appendChild(num);
           }
-          cleanedRows.push({
-            description: normalizedRow.description.trim(),
-            date: normalizedRow.date.trim(),
-            amount: formatNumber(parsed.value)
-          });
-        });
-
-        if (cleanedRows.length === 0) {
-          errors.push('يرجى إدخال صف بيانات واحد على الأقل في الجدول الرئيسي.');
-        }
-
-        return {
-          valid: errors.length === 0,
-          errors,
-          rows: cleanedRows,
-          missingTitle,
-          missingImage,
-          invalidAmountRows
-        };
-      }
-
-      function enableEditMode() {
-        if (!state.currentTable) return;
-        state.mode = 'edit';
-        renderEditor();
-        showMessage('success', 'تم تفعيل وضع التعديل. بعد الانتهاء اضغط حفظ لتحديث نفس الجدول.');
-      }
-
-      function printCurrentDocument() {
-        if (!state.currentTable) return;
-        const validation = validateTableForSave(state.currentTable);
-        if (!validation.valid) {
-          if (state.mode === 'edit') markInvalidRequiredFields(validation);
-          showMessage('error', 'لا يمكن الطباعة قبل اكتمال المستند: ' + validation.errors.join(' '));
-          return;
-        }
-        renderDocument();
-        window.setTimeout(() => window.print(), 120);
-      }
-
-      async function handleBackHome() {
-        if (state.dirty) {
-          const confirmed = window.confirm('هناك تعديلات غير محفوظة. هل تريد العودة دون حفظها؟');
-          if (!confirmed) return;
-        }
-        state.currentTable = null;
-        state.dirty = false;
-        await loadHome();
-      }
-
-      async function handleSavedCardAction(event) {
-        const button = event.target.closest('[data-action]');
-        if (!button) return;
-        const card = button.closest('.table-card');
-        const id = card && card.dataset.id;
-        if (!id) return;
-
-        const action = button.dataset.action;
-        if (action === 'open') {
-          await openSavedTable(id, 'view');
-        } else if (action === 'edit') {
-          await openSavedTable(id, 'edit');
-        } else if (action === 'print') {
-          await openSavedTable(id, 'view', { autoPrint: true });
-        } else if (action === 'delete') {
-          await deleteSavedTable(id);
+          pagesContainer.appendChild(page);
         }
       }
 
-      async function deleteSavedTable(id) {
-        const table = state.tables.find((item) => item.id === id);
-        const title = table && table.title ? '«' + table.title + '»' : 'هذا الجدول';
-        const confirmed = window.confirm('هل أنت متأكد من حذف ' + title + '؟ لا يمكن التراجع عن الحذف.');
-        if (!confirmed) return;
-
-        try {
-          await state.storage.delete(id);
-          await loadHome({ type: 'success', text: 'تم حذف الجدول المحدد فقط دون التأثير على بقية الجداول.' });
-        } catch (error) {
-          showMessage('error', friendlyError(error, 'تعذر حذف الجدول.'));
-        }
+      function renderAll(){
+        renderThumbs();
+        renderPages();
       }
 
-      function createBlankTable() {
-        return {
-          id: null,
-          appVersion: APP_VERSION,
-          title: '',
-          basmalaDataUrl: '',
-          basmalaFileName: '',
-          columns: DEFAULT_COLUMNS.map((column) => ({ ...column })),
-          rows: [createBlankRow(), createBlankRow(), createBlankRow()],
-          personName: '',
-          personWork: '',
-          createdAt: null,
-          updatedAt: null
-        };
+      function escapeHtml(s){
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       }
 
-      function createBlankRow() {
-        return { description: '', date: '', amount: '' };
-      }
+      // Events
+      fileInput.addEventListener('change', e=>{
+        if(e.target.files) addFiles(e.target.files);
+        e.target.value='';
+      });
+      uploadZone.addEventListener('dragover', e=>{
+        e.preventDefault();
+        uploadZone.classList.add('drag');
+      });
+      uploadZone.addEventListener('dragleave', ()=> uploadZone.classList.remove('drag'));
+      uploadZone.addEventListener('drop', e=>{
+        e.preventDefault();
+        uploadZone.classList.remove('drag');
+        if(e.dataTransfer.files) addFiles(e.dataTransfer.files);
+      });
 
-      function ensureAtLeastOneRow(table) {
-        if (!Array.isArray(table.rows) || table.rows.length === 0) {
-          table.rows = [createBlankRow()];
-        }
-      }
+      colsInput.addEventListener('input', ()=>{
+        let v = parseInt(colsInput.value,10);
+        if(isNaN(v) || v<1) v=1;
+        if(v>8) v=8;
+        cols = v;
+        perPage = cols*rows;
+        syncLayoutButtons();
+        renderPages();
+      });
+      rowsInput.addEventListener('input', ()=>{
+        let v = parseInt(rowsInput.value,10);
+        if(isNaN(v) || v<1) v=1;
+        if(v>8) v=8;
+        rows = v;
+        perPage = cols*rows;
+        syncLayoutButtons();
+        renderPages();
+      });
 
-      function normalizeTable(table) {
-        if (!table || typeof table !== 'object') return null;
-        const rows = Array.isArray(table.rows) ? table.rows.map(normalizeRow) : [];
-        return {
-          id: table.id || null,
-          appVersion: table.appVersion || APP_VERSION,
-          title: String(table.title || ''),
-          basmalaDataUrl: String(table.basmalaDataUrl || ''),
-          basmalaFileName: String(table.basmalaFileName || ''),
-          columns: Array.isArray(table.columns) && table.columns.length ? table.columns : DEFAULT_COLUMNS.map((column) => ({ ...column })),
-          rows: rows.length ? rows : [createBlankRow()],
-          personName: String(table.personName || ''),
-          personWork: String(table.personWork || ''),
-          createdAt: table.createdAt || null,
-          updatedAt: table.updatedAt || table.createdAt || null
-        };
-      }
+      [marginSelect, gapSelect, fitSelect, borderCheck, roundedCheck, cutCheck, numbersCheck].forEach(el=>{
+        el.addEventListener('change', renderPages);
+      });
 
-      function normalizeRow(row) {
-        row = row || {};
-        return {
-          description: String(row.description || ''),
-          date: String(row.date || ''),
-          amount: String(row.amount || '')
-        };
-      }
-
-      function cloneTable(table) {
-        return JSON.parse(JSON.stringify(table));
-      }
-
-      function sortByUpdatedDesc(a, b) {
-        return new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime();
-      }
-
-      function hasAnyRowData(row) {
-        return Boolean((row.description || '').trim() || (row.date || '').trim() || (row.amount || '').trim());
-      }
-
-      function parseAmount(value) {
-        const original = String(value == null ? '' : value).trim();
-        if (!original) return { valid: true, value: 0, empty: true };
-        const normalizedDigits = normalizeDigits(original);
-        const compact = normalizedDigits.replace(/[\s,،٬_]/g, '');
-
-        if (!/^\d+$/.test(compact)) {
-          return { valid: false, value: 0, empty: false };
-        }
-
-        const numericValue = Number(compact);
-        if (!Number.isSafeInteger(numericValue) || numericValue > MAX_SUPPORTED_NUMBER) {
-          return { valid: false, value: 0, empty: false };
-        }
-
-        return { valid: true, value: numericValue, empty: false };
-      }
-
-      function normalizeDigits(value) {
-        const arabicZero = '٠'.charCodeAt(0);
-        const persianZero = '۰'.charCodeAt(0);
-        return String(value).replace(/[٠-٩۰-۹]/g, (digit) => {
-          const code = digit.charCodeAt(0);
-          if (code >= arabicZero && code <= arabicZero + 9) return String(code - arabicZero);
-          return String(code - persianZero);
-        });
-      }
-
-      function calculateRowsTotal(rows) {
-        let total = 0;
-        const invalidRows = [];
-        (Array.isArray(rows) ? rows : []).forEach((row, index) => {
-          const amount = row && row.amount;
-          if (!String(amount || '').trim()) return;
-          const parsed = parseAmount(amount);
-          if (parsed.valid) {
-            total += parsed.value;
-          } else {
-            invalidRows.push(index + 1);
+      $$('.toggle-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          orientation = btn.dataset.orient;
+          $$('.toggle-btn').forEach(b=>b.classList.toggle('active', b===btn));
+          // auto swap if needed to keep portrait logic
+          const g = gridForCount(perPage, orientation);
+          // only auto swap if user hasn't customized? We'll keep cols/rows swap if they were default
+          // For simplicity, swap cols/rows when switching orientation if cols!=rows
+          if( (orientation==='landscape' && cols<rows) || (orientation==='portrait' && cols>rows) ){
+            const tmp = cols; cols = rows; rows = tmp;
+            colsInput.value = cols; rowsInput.value = rows;
           }
+          renderPages();
+          // update @page for print
+          updatePrintPageStyle();
         });
-        return { total, invalidRows };
-      }
+      });
 
-      function displayAmount(value) {
-        const text = String(value || '').trim();
-        if (!text) return '';
-        const parsed = parseAmount(text);
-        return parsed.valid ? formatNumber(parsed.value) : text;
-      }
-
-      function formatNumber(value) {
-        const number = Number(value) || 0;
-        return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(number);
-      }
-
-      function arabicMoneyText(value) {
-        const number = Number(value) || 0;
-        if (!Number.isSafeInteger(number) || number < 0 || number > MAX_SUPPORTED_NUMBER) {
-          return 'رقم غير مدعوم';
+      function updatePrintPageStyle(){
+        let style = document.getElementById('printPageStyle');
+        if(!style){
+          style=document.createElement('style');
+          style.id='printPageStyle';
+          document.head.appendChild(style);
         }
-        if (number === 0) return 'صفر ريال يمني فقط لا غير';
-        if (number === 1) return 'ريال يمني واحد فقط لا غير';
-        if (number === 2) return 'ريالان يمنيان فقط لا غير';
-        const words = numberToArabicWords(number);
-        if (number >= 3 && number <= 10) {
-          return words + ' ريالات يمنية فقط لا غير';
+        style.textContent = `@page{ size: A4 ${orientation}; margin:0 }`;
+      }
+      updatePrintPageStyle();
+
+      printBtn.addEventListener('click', ()=> window.print());
+      previewPrintBtn.addEventListener('click', ()=> window.print());
+
+      clearAllBtn.addEventListener('click', ()=>{
+        if(images.length===0) return;
+        if(!confirm(`هل أنت متأكد من حذف جميع الصور (${images.length})؟`)) return;
+        images.forEach(i=> URL.revokeObjectURL(i.src));
+        images=[];
+        renderAll();
+      });
+
+      shuffleBtn.addEventListener('click', ()=>{
+        if(images.length<2) return;
+        for(let i=images.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [images[i], images[j]]=[images[j], images[i]];
         }
-        return words + ' ريال يمني فقط لا غير';
-      }
+        renderAll();
+      });
+      reverseBtn.addEventListener('click', ()=>{
+        images.reverse();
+        renderAll();
+      });
 
-      function numberToArabicWords(number) {
-        if (number === 0) return 'صفر';
-        const scales = [
-          null,
-          { singular: 'ألف', dual: 'ألفان', plural: 'آلاف' },
-          { singular: 'مليون', dual: 'مليونان', plural: 'ملايين' },
-          { singular: 'مليار', dual: 'ملياران', plural: 'مليارات' },
-          { singular: 'تريليون', dual: 'تريليونان', plural: 'تريليونات' }
-        ];
+      // init
+      buildLayoutButtons();
+      renderAll();
 
-        const chunks = [];
-        let remaining = number;
-        while (remaining > 0) {
-          chunks.push(remaining % 1000);
-          remaining = Math.floor(remaining / 1000);
-        }
-
-        const parts = [];
-        for (let index = chunks.length - 1; index >= 0; index -= 1) {
-          const chunk = chunks[index];
-          if (!chunk) continue;
-          parts.push(convertChunkWithScale(chunk, index, scales[index]));
-        }
-        return parts.join(' و');
-      }
-
-      function convertChunkWithScale(chunk, scaleIndex, scale) {
-        if (scaleIndex === 0 || !scale) return convertLessThanThousand(chunk);
-        if (chunk === 1) return scale.singular;
-        if (chunk === 2) return scale.dual;
-        if (chunk >= 3 && chunk <= 10) return convertLessThanThousand(chunk) + ' ' + scale.plural;
-        return convertLessThanThousand(chunk) + ' ' + scale.singular;
-      }
-
-      function convertLessThanThousand(number) {
-        const hundreds = ['', 'مائة', 'مائتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
-        const hundred = Math.floor(number / 100);
-        const rest = number % 100;
-        const parts = [];
-        if (hundred) parts.push(hundreds[hundred]);
-        if (rest) parts.push(convertLessThanHundred(rest));
-        return parts.join(' و');
-      }
-
-      function convertLessThanHundred(number) {
-        const ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
-        const teens = {
-          10: 'عشرة',
-          11: 'أحد عشر',
-          12: 'اثنا عشر',
-          13: 'ثلاثة عشر',
-          14: 'أربعة عشر',
-          15: 'خمسة عشر',
-          16: 'ستة عشر',
-          17: 'سبعة عشر',
-          18: 'ثمانية عشر',
-          19: 'تسعة عشر'
-        };
-        const tens = ['', '', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
-
-        if (number < 10) return ones[number];
-        if (number < 20) return teens[number];
-        const unit = number % 10;
-        const ten = Math.floor(number / 10);
-        if (!unit) return tens[ten];
-        return ones[unit] + ' و' + tens[ten];
-      }
-
-      function updateImageStatus() {
-        if (!state.currentTable) return;
-        elements.imageStatus.style.color = '';
-        if (state.currentTable.basmalaDataUrl) {
-          elements.imageStatus.textContent = 'تم اختيار صورة بسملة' + (state.currentTable.basmalaFileName ? ': ' + state.currentTable.basmalaFileName : ' محفوظة.') ;
-        } else {
-          elements.imageStatus.textContent = 'لم يتم اختيار صورة بعد.';
-        }
-      }
-
-      function updateAmountsNote() {
-        if (!state.currentTable) return;
-        const totals = calculateRowsTotal(state.currentTable.rows);
-        let note = 'الإجمالي الحالي: ' + formatNumber(totals.total) + ' — ' + arabicMoneyText(totals.total);
-        if (totals.invalidRows.length) {
-          note += ' | توجد مبالغ غير صالحة في الصفوف: ' + totals.invalidRows.join('، ');
-          elements.amountsNote.style.color = 'var(--danger)';
-        } else {
-          elements.amountsNote.style.color = '';
-        }
-        elements.amountsNote.textContent = note;
-      }
-
-      function readFileAsDataUrl(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(String(reader.result || ''));
-          reader.onerror = () => reject(reader.error || new Error('تعذرت قراءة الملف.'));
-          reader.readAsDataURL(file);
-        });
-      }
-
-      function createId() {
-        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-          return window.crypto.randomUUID();
-        }
-        return 'table-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
-      }
-
-      function markDirty() {
-        state.dirty = true;
-      }
-
-      function showMessage(type, text) {
-        clearTimeout(state.lastMessageTimer);
-        elements.appMessage.className = 'message no-print show ' + (type || 'success');
-        elements.appMessage.textContent = text;
-        state.lastMessageTimer = window.setTimeout(() => {
-          elements.appMessage.classList.remove('show');
-        }, type === 'error' ? 9000 : 5200);
-      }
-
-      function friendlyError(error, fallback) {
-        if (!error) return fallback;
-        return error.message || fallback;
-      }
-
-      function formatDateTime(value) {
-        if (!value) return 'غير محدد';
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return 'غير محدد';
-        try {
-          return new Intl.DateTimeFormat('ar-YE', {
-            year: 'numeric', month: '2-digit', day: '2-digit',
-            hour: '2-digit', minute: '2-digit'
-          }).format(date);
-        } catch (error) {
-          return date.toLocaleString('ar');
-        }
-      }
-
-      function escapeHtml(value) {
-        return String(value == null ? '' : value)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
-      }
-
-      function escapeAttribute(value) {
-        return escapeHtml(value).replace(/`/g, '&#096;');
-      }
-
-      function schedulePaperScale() {
-        window.requestAnimationFrame(updatePaperScale);
-      }
-
-      function updatePaperScale() {
-        if (!elements.documentPaper || !elements.paperScaleFrame || !elements.editorScreen.classList.contains('active')) return;
-        const viewport = elements.paperScaleFrame.parentElement;
-        const naturalWidth = elements.documentPaper.offsetWidth || 794;
-        const availableWidth = Math.max(280, viewport.clientWidth - 24);
-        const scale = Math.min(1, availableWidth / naturalWidth);
-        document.documentElement.style.setProperty('--paper-scale', String(scale));
-        const naturalHeight = Math.max(elements.documentPaper.scrollHeight, Math.round(297 * 96 / 25.4));
-        elements.paperScaleFrame.style.height = Math.ceil(naturalHeight * scale) + 'px';
-      }
-
-      document.addEventListener('DOMContentLoaded', bootstrap);
+      // keyboard: Ctrl+P handled natively
     })();
   </script>
 </body>
